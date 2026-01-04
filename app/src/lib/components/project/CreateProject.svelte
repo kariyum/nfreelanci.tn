@@ -217,9 +217,9 @@
 
 {#snippet createProject(projectIn: ProjectGET | undefined)}
 	{#if projectIn}
-		<h1>Update your project</h1>
+		<h2>Update your project</h2>
 	{:else}
-		<h1>Create a new project</h1>
+		<h2>Create a new project</h2>
 	{/if}
 	<div class="new-container">
 		<div class="left">

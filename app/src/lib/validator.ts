@@ -1,4 +1,4 @@
-import { Result } from './utils';
+import { Result, snakeToCapital } from './utils';
 
 export abstract class Validator<T, E> {
     abstract validate(s: T | undefined | null): E[];
@@ -23,7 +23,7 @@ export class StringValidator extends Validator<string, string> {
     constructor(field: string) {
         super();
         this.validators = [];
-        this.field = field.charAt(0).toUpperCase() + field.slice(1);
+        this.field = snakeToCapital(field);
     }
 
     nonEmpty(): StringValidator {
@@ -49,7 +49,7 @@ export class StringValidator extends Validator<string, string> {
             } else {
                 return new Result<void, string>(
                     undefined,
-                    `${this.field} should contain more than ${minSize} characters`
+                    `${this.field} should be at least ${minSize} characters long`
                 );
             }
         };
@@ -114,10 +114,10 @@ export class StringValidator extends Validator<string, string> {
         const equal: StringValidatorType = (
             s: string | undefined | null
         ): Result<void, string> => {
-            if (!s || s === other) {
+            if (!s && s === other) {
                 return new Result<void, string>();
             } else {
-                return new Result<void, string>(undefined, `${this.field} is not equal to ${otherField}`);
+                return new Result<void, string>(undefined, `${this.field} is not equal to ${snakeToCapital(otherField)}`);
             }
         };
         this.validators.push(equal);

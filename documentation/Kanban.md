@@ -24,11 +24,11 @@ kanban-plugin: board
 - [ ] make richtexteditor buttons unfocused with TAB
 - [ ] Assign tasks to applicants after accepting the proposal
 - [ ] load mobile css vs desktop css based on width
+- [ ] products search, start with what is available in the ui, using service workers to not lag the ui at the same time request remote search and either combine or show API response for completeness
 
 
 ## p2
 
-- [ ] products search, start with what is available in the ui, using service workers to not lag the ui at the same time request remote search and either combine or show API response for completeness
 - [ ] UI unit test
 - [ ] add email verification - SMTP server (look for a free provider)
 - [ ] add phone number verification
@@ -41,22 +41,17 @@ kanban-plugin: board
 
 ## p1
 
-- [ ] discussion page revamp
-- [ ] add freelancer feature to see ongoing tasks for him
-- [ ] sending email capabilities
 - [ ] forgot password
 - [ ] google login
-- [ ] settings page
+- [ ] add freelancer feature to see ongoing tasks for him
+- [ ] sending email capabilities
 - [ ] rename urls. Use projects/{id} instead of project/{id}. Plural vs Singular. Plural is the REST standard
-- [ ] add cancelled status color
-- [ ] add budget form submission
 - [ ] add on chat message notification
 - [ ] discussion page man, get it done well
 
 
 ## doing
 
-- [ ] settings page refresh
 
 
 ## tested
@@ -65,6 +60,11 @@ kanban-plugin: board
 
 ## done
 
+- [ ] add budget form submission
+- [ ] add cancelled status color
+- [ ] settings page
+- [ ] discussion page revamp
+- [ ] settings page refresh
 - [ ] add discussion context Task content
 - [ ] change status colors
 - [ ] freelancers removing application

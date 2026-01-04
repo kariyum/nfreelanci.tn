@@ -42,6 +42,19 @@ input {
     font-size: 16px;
 }
 
+input[type='submit'] {
+    cursor: pointer;
+    margin-left: auto;
+    background-color: var(--btn-bg);
+    border-width: 1px;
+    padding: 0.5rem 1rem;
+    width: max-content;
+
+    &:hover {
+        background-color: var(--hover-color);
+    }
+}
+
 select {
     background-color: var(--input-bg);
     padding: 0.5rem;
@@ -135,6 +148,7 @@ textarea {
     --title: hsl(0, 0%, 15%);
     --sub-title: hsl(0, 0%, 5%, 0.5);
     --error-color: rgb(187, 101, 101);
+    --success-color: rgb(122, 187, 101);
 
     .primary-btn {
         color: hsl(0, 0%, 99%);
@@ -163,6 +177,7 @@ textarea {
     --active-button: #424242;
     --toast-bg: #333333;
     --error-color: rgb(187, 101, 101);
+    --success-color: rgb(118, 187, 101);
     --label-color: #5f6368;
     --delete-hover-color: hsl(0, 100%, 100%);
 
