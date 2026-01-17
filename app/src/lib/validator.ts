@@ -114,10 +114,11 @@ export class StringValidator extends Validator<string, string> {
         const equal: StringValidatorType = (
             s: string | undefined | null
         ): Result<void, string> => {
-            if (!s && s === other) {
+            if (s != null && s != undefined && s === other) {
                 return new Result<void, string>();
             } else {
-                return new Result<void, string>(undefined, `${this.field} is not equal to ${snakeToCapital(otherField)}`);
+                console.log(s, other);
+                return new Result<void, string>(undefined, `${snakeToCapital(this.field)} is not equal to ${snakeToCapital(otherField)}`);
             }
         };
         this.validators.push(equal);

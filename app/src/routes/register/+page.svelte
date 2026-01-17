@@ -22,7 +22,7 @@
 			last_name: Validator.string('last name').required().nonEmpty().withMinSize(2).withMaxSize(20),
 			email: Validator.string('email').required().nonEmpty().email().withMaxSize(50),
 			password: Validator.string('password').required().nonEmpty().withMinSize(8),
-			confirm_password: Validator.string('confirm password')
+			confirm_password: Validator.string('confirm_password')
 				.required()
 				.equal(data.get('password')?.toString() ?? '', 'password')
 		};
@@ -264,7 +264,7 @@
 							disabled={currentStep >= steps.length - 1}>Continue</button
 						>
 					{:else}
-						<button type="submit" onclick={submit}>Submit</button>
+						<button type="submit">Submit</button>
 					{/if}
 				</div>
 			</div>

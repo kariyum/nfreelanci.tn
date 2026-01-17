@@ -11,8 +11,10 @@
 </script>
 
 <div class="outer-container">
-	<a href="/settings" style="padding: 0"><h1>Settings</h1></a>
-	<p style="color:var(--sub-title)">Manage your account settings and preferences.</p>
+	<div style="view-transition-name: no-transition;">
+		<a href="/settings" style="padding: 0"><h1>Settings</h1></a>
+		<p style="color:var(--sub-title)">Manage your account settings and preferences.</p>
+	</div>
 	<div class="container">
 		<div class="menu" data-selected={pageToHeader.get(onPage) != undefined}>
 			<a class="link" href="/settings/profile" data-selected={onPage === 'profile'}>
@@ -24,9 +26,6 @@
 			</a>
 		</div>
 		<div class="main card card-padding" data-selected={pageToHeader.get(onPage) != undefined}>
-			<!-- {#if pageToHeader.get(onPage)}
-				<h2>{pageToHeader.get(onPage)}</h2>
-			{/if} -->
 			{@render children()}
 		</div>
 	</div>
@@ -70,6 +69,7 @@
 		background-color: var(--blue);
 		left: -0.6rem;
 		top: 0.15rem;
+		view-transition-name: selected-menu;
 	}
 
 	.link:hover {
@@ -80,6 +80,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		view-transition-name: menu;
 	}
 
 	@media (width < 600px) {

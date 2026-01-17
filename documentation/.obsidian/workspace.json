@@ -54,18 +54,6 @@
               "icon": "lucide-trello",
               "title": "Kanban"
             }
-          },
-          {
-            "id": "e40bddc42265db46",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.9.14"
-              },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.9.14"
-            }
           }
         ],
         "currentTab": 2
@@ -100,7 +88,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "css",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -215,20 +203,21 @@
   },
   "active": "2dab26cf665dfcb9",
   "lastOpenFiles": [
-    "Excalidraw/Drawing 2025-02-13 22.17.47.excalidraw.md",
+    "Pages/Register.md",
+    "Pasted image 20260116210424.png",
     "resources/css.md",
+    "Kanban.md",
+    "Excalidraw/Drawing 2025-01-02 21.05.03.excalidraw.md",
+    "Excalidraw/Drawing 2025-02-13 22.17.47.excalidraw.md",
     "typescript/Regex search.md",
     "typescript",
-    "Excalidraw/Drawing 2025-01-02 21.05.03.excalidraw.md",
     "Excalidraw/Drawing 2024-11-25 13.03.53.excalidraw.md",
-    "Kanban.md",
     "Design/Dark Mode.md",
     "Design/websocket_2024-10-17 22.26.09.excalidraw.md",
     "Design/Inspirations.md",
     "Design/Recommendation system.md",
     "Design/Web Design Inspirations.md",
     "Design/Websocket.md",
-    "Pages/Register.md",
     "Pages/Login.md",
     "User stories/1 - websocket pgpool.md",
     "User stories/2 - User to project application.md",
@@ -251,7 +240,6 @@
     "Entity Relationship Diagram/ERP.md",
     "Diagram 1.svg.xml",
     "User stories",
-    "Design/Workflow designs.md",
     "Entity Relationship Diagram/Untitled Diagram.svg",
     "Entity Relationship Diagram",
     "Untitled.canvas",

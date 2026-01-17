@@ -48,6 +48,8 @@ kanban-plugin: board
 - [ ] rename urls. Use projects/{id} instead of project/{id}. Plural vs Singular. Plural is the REST standard
 - [ ] add on chat message notification
 - [ ] discussion page man, get it done well
+- [ ] freelancer specify budget
+- [ ] freelancer specify proposal message
 
 
 ## doing

@@ -51,7 +51,7 @@
 			<a href="/">
 				<MoveLeft size="3rem" />
 			</a>
-			<h1>Welcome</h1>
+			<h1>Welcome back !</h1>
 			<form class="fields-container" method="post" onsubmit={(event) => event.preventDefault()}>
 				<div class="fields">
 					<div class="input-label">
