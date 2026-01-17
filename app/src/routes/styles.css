@@ -158,22 +158,27 @@ textarea {
 
 .dark {
     color-scheme: dark;
-    color: rgb(234, 234, 234);
 
-    -webkit-tap-highlight-color: hsla(0, 0%, 51%, 0.283);
-    --foreground: hsl(0, 0%, 95%);
+    --brand-hue: 266.53;
+
+    -webkit-tap-highlight-color: hsla(0, 0%, 33%, 0.283);
+    --background-color: oklch(0.20 0.006 var(--brand-hue));
+    --darker-bg: oklch(from var(--background-color) calc(l - 0.02) c h);
+    --input-bg: oklch(from var(--background-color) calc(l) c h);
+    
     --secondary: hsl(0, 0%, 9%);
-    --font-color: #bfbfbf;
-    --card-bg: hsl(0, 0%, 13%);
-    --background-color: hsl(0, 0%, 9%);
-    --darker-bg: hsl(0, 0%, 5%);
+    
+    /* this should be card color */
+    --foreground: hsl(0, 0%, 95%);
+    --font-color: oklch(0.95 0.01 var(--brand-hue));
+
+    --card-bg: oklch(0.24 0.008 var(--brand-hue));
+    --navbar-color: oklch(0.24 0.008 var(--brand-hue));
     --canvas-color: rgb(18, 18, 18);
     --message-bg: #272727;
-    --navbar-color: #1d1d1d;
     --navbar-border: #727272;
     --selected-color: #272a2e;
     --hover-color: #353a3f;
-    --input-bg: #1E1E1E;
     --active-button: #424242;
     --toast-bg: #333333;
     --error-color: rgb(187, 101, 101);
@@ -181,9 +186,6 @@ textarea {
     --label-color: #5f6368;
     --delete-hover-color: hsl(0, 100%, 100%);
 
-    --primary: #212227;
-    --dark-text: #f9fafb;
-    --bright-text: #111827;
     --border: hsl(0, 0%, 20%);
     --btn-bg: #272d31;
     --tag-bg: #464646;
@@ -203,7 +205,7 @@ textarea {
 
     --title: hsl(0, 0%, 85%);
     --sub-title: hsl(0, 0%, 95%, 0.5);
-
+    color: var(--font-color);
     .primary-btn {
         background-color: hsl(0, 0%, 96%);
         color: hsl(0, 0%, 5%);
