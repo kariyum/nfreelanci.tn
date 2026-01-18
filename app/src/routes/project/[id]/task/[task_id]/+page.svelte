@@ -5,7 +5,9 @@
 	import { MessageCircle, SquarePen, Trash } from 'lucide-svelte';
 	import type { ProposalGET } from './+layout.js';
 	import { page } from '$app/state';
-	import Dialog from '$lib/components/dialog/Dialog.svelte';
+	import Dialog from '$lib/ui/dialog/Dialog.svelte';
+	import Input from '$lib/ui/input/Input.svelte';
+	import EditProposal from '$lib/components/proposal/EditProposal.svelte';
 
 	let { data } = $props();
 	let task = $derived(data.task);
@@ -294,13 +296,8 @@
 											}}>Re-submit Application</button
 										>
 									{:else}
-										{#snippet editDialog(onClose: () => void, onSubmit: () => void)}
-											<div>OK</div>
-											<button onclick={onClose}>Close</button>
-											<button onclick={onSubmit}>Submit</button>
-										{/snippet}
 										<div class="edit-delete-btns">
-											<Dialog title="Edit" dialogBody={editDialog}></Dialog>
+											<EditProposal></EditProposal>
 											{#if task.proposal_status == 'pending'}
 												<button
 													style="background-color:var(--vibrant-red)"
