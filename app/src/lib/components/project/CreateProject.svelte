@@ -8,7 +8,7 @@
 	import { Plus } from 'lucide-svelte';
 	import AsyncButton from '../button/AsyncButton.svelte';
 	import Skills from '../skills/Skills.svelte';
-	import RichTextEditor from '../texteditor/RichTextEditor.svelte';
+	import RichTextEditor from '../../ui/texteditor/RichTextEditor.svelte';
 
 	let {
 		projectIn
