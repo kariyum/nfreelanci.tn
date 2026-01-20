@@ -4,7 +4,7 @@ use crate::repository::tasks::{
     delete_tasks, insert_tasks_sequentially, read_tasks_by_project_id, update_task, CreateTask,
 };
 use crate::repository::tasks_proposals::RawTaskProposal;
-use crate::routes::proposals_handler::get_proposals;
+use crate::routes::proposals_handler::get_proposals_handler;
 use crate::services::token::Claims;
 use actix_web::dev::HttpServiceFactory;
 use actix_web::web::{Json, Path};
@@ -357,6 +357,6 @@ pub fn routes() -> impl HttpServiceFactory {
         .route("/{id}", web::put().to(put_project_handler))
         .route(
             "/{id}/task/{task_id}/proposals",
-            web::get().to(get_proposals),
+            web::get().to(get_proposals_handler),
         )
 }

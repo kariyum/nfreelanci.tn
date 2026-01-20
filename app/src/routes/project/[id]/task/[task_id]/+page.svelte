@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
-	import { processTaskJson, type TaskGET } from '$lib/types/task.js';
+	import { type TaskGET } from '$lib/types/task.js';
 	import { formatDate, snakeToCapital } from '$lib/utils.js';
 	import { MessageCircle, SquarePen, Trash } from 'lucide-svelte';
 	import type { ProposalGET } from './+layout.js';
 	import { page } from '$app/state';
-	import Dialog from '$lib/ui/dialog/Dialog.svelte';
-	import Input from '$lib/ui/input/Input.svelte';
 	import EditProposal from '$lib/components/proposal/EditProposal.svelte';
 
 	let { data } = $props();
@@ -297,7 +295,11 @@
 										>
 									{:else}
 										<div class="edit-delete-btns">
-											<EditProposal></EditProposal>
+											<EditProposal
+												inBudget={task.proposal_budget}
+												inContent={task.proposal_content}
+												proposalId={task.proposal_id}
+											></EditProposal>
 											{#if task.proposal_status == 'pending'}
 												<button
 													style="background-color:var(--vibrant-red)"

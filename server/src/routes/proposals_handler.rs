@@ -1,7 +1,11 @@
 use crate::repository::discussions::get_discussion_id;
 use crate::repository::discussions::{insert_discussion, CreateDiscussion};
 use crate::repository::notifications::{insert_notification, CreateNotification, NotificationType};
-use crate::repository::proposal::{insert_proposal, read_proposal_for_notification, read_proposals_freelancer, read_proposals_owner, update_proposal_status, CreateProposal, ProposalStatus};
+use crate::repository::proposal::{
+    insert_proposal, read_proposal_for_notification, read_proposals_freelancer,
+    read_proposals_owner, update_proposal_content, update_proposal_status, CreateProposal,
+    ProposalStatus,
+};
 use crate::repository::tasks::{read_task_creator_by_id, TaskCreator};
 use crate::services::token::Claims;
 use crate::websocket::lobby::Lobby;
@@ -10,20 +14,9 @@ use actix_web::dev::HttpServiceFactory;
 use actix_web::web::{Data, Json, Path};
 use actix_web::{web, HttpResponse, Responder};
 use bigdecimal::BigDecimal;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::json;
 use sqlx::PgPool;
-
-#[derive(Serialize, sqlx::FromRow)]
-struct ProposalRow {
-    id: i32,
-    user_id: String,
-    task_id: i32,
-    status: i32,
-    budget: Option<f32>,
-    content: Option<String>,
-    created_at: chrono::DateTime<chrono::Utc>,
-}
 
 #[derive(Deserialize)]
 pub struct ProposalCreate {
@@ -32,7 +25,7 @@ pub struct ProposalCreate {
     content: Option<String>,
 }
 
-pub async fn create_proposal(
+pub async fn create_proposal_handler(
     claims: Claims,
     Json(proposal_create): Json<ProposalCreate>,
     pgpool: Data<PgPool>,
@@ -101,7 +94,7 @@ pub async fn create_proposal(
     HttpResponse::Created().finish()
 }
 
-pub async fn get_proposals(
+pub async fn get_proposals_handler(
     claims: Claims,
     path: Path<(i32, i32)>,
     pgpool: Data<PgPool>,
@@ -119,10 +112,10 @@ pub async fn get_proposals(
     HttpResponse::Ok().json(proposals)
 }
 
-pub async fn delete_proposal(
+pub async fn delete_proposal_handler(
     _: Claims,
     path: Path<i32>,
-    pgpool: web::Data<PgPool>,
+    pgpool: Data<PgPool>,
 ) -> impl Responder {
     let mut client = pgpool
         .acquire()
@@ -137,22 +130,6 @@ pub async fn delete_proposal(
         .expect(format!("Failed to delete proposal from the database {task_id}").as_str());
 
     HttpResponse::Ok().finish()
-}
-
-pub async fn get_proposal(_: Claims, path: Path<i32>, pgpool: web::Data<PgPool>) -> impl Responder {
-    let mut client = pgpool
-        .acquire()
-        .await
-        .expect("Failed to acquire a Postgres connection from the pool");
-
-    let proposal_id = path.into_inner();
-    let proposal = sqlx::query_as::<_, ProposalRow>("SELECT * FROM proposals WHERE id = $1")
-        .bind(&proposal_id)
-        .fetch_optional(&mut *client)
-        .await
-        .expect(format!("Failed to delete project from the database {proposal_id}").as_str());
-
-    HttpResponse::Ok().json(proposal)
 }
 
 #[derive(Deserialize)]
@@ -223,12 +200,38 @@ async fn update_proposal_status_handler(
     HttpResponse::Ok().finish()
 }
 
+#[derive(Deserialize)]
+pub struct ProposalUpdate {
+    budget: Option<BigDecimal>,
+    content: Option<String>,
+}
+async fn update_proposal_handler(
+    claims: Claims,
+    // lobby: Data<Addr<Lobby>>,
+    path: Path<i32>,
+    Json(proposal_update): Json<ProposalUpdate>,
+    pgpool: Data<PgPool>,
+) -> impl Responder {
+    let proposal_id = path.into_inner();
+    update_proposal_content(
+        claims.sub,
+        proposal_id,
+        proposal_update.content,
+        proposal_update.budget,
+        pgpool.as_ref(),
+    )
+    .await
+    .expect("Failed to update proposal content");
+
+    HttpResponse::Ok().finish()
+}
+
 pub fn routes() -> impl HttpServiceFactory {
     web::scope("proposals")
-        .route("", web::post().to(create_proposal))
-        .route("", web::get().to(get_proposals))
-        .route("{id}", web::delete().to(delete_proposal))
-        .route("{id}", web::get().to(get_proposal))
+        .route("", web::post().to(create_proposal_handler))
+        .route("", web::get().to(get_proposals_handler))
+        .route("{id}", web::delete().to(delete_proposal_handler))
+        .route("{id}", web::put().to(update_proposal_handler))
         .route(
             "{id}/status",
             web::patch().to(update_proposal_status_handler),

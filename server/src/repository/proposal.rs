@@ -149,6 +149,25 @@ pub async fn update_proposal_status(
     .map(|_| ())
 }
 
+pub async fn update_proposal_content(
+    user_id: String,
+    proposal_id: i32,
+    content: Option<String>,
+    budget: Option<BigDecimal>,
+    conn: impl Executor<'_, Database = Postgres>,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        r#"UPDATE proposals SET content = $1, budget = $2 WHERE id = $3 and user_id = $4"#,
+        content,
+        budget,
+        proposal_id,
+        user_id
+    )
+    .execute(conn)
+    .await
+    .map(|_| ())
+}
+
 #[cfg(test)]
 mod test {
     use crate::repository::proposal::read_proposals;

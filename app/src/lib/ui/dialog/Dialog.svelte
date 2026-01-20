@@ -1,22 +1,23 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { fly } from 'svelte/transition';
 
 	const {
-		title,
-		dialogBody
+		dialogBody,
+		button
 	}: {
-		title: String;
 		dialogBody: Snippet<[onClose: () => void, onSubmit: () => void]>;
+		button: Snippet<[onOpen: () => void]>;
 	} = $props();
 
 	let dialog: HTMLDialogElement;
 
 	const onClose = () => dialog.close();
 	const onSubmit = () => dialog.close();
+	const onOpen = () => dialog.showModal();
 </script>
 
-<button onclick={() => dialog.showModal()}>{title}</button>
+{@render button(onOpen)}
+
 <dialog bind:this={dialog}>
 	{@render dialogBody(onClose, onSubmit)}
 </dialog>
@@ -27,8 +28,7 @@
 		top: 50%;
 		transform: translate(-50%, -50%);
 		padding: 1rem;
-		min-width: 30%;
-		min-height: 30%;
+		min-width: 20%;
 		border: 2px solid var(--border);
 		border-radius: 15px;
 		opacity: 1;
