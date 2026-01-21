@@ -11,8 +11,8 @@
 		inBudget
 	}: { proposalId: number; inContent?: string; inBudget?: number } = $props();
 
-	let budget = $state(inBudget?.toString() ?? '');
-	let content = $state(inContent ?? '');
+	let budget = $derived(inBudget?.toString() ?? '');
+	let content = $derived(inContent ?? '');
 
 	async function updateProposal(proposalId: number, content: string, budget: string) {
 		const payload = {
