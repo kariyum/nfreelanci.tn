@@ -20,6 +20,52 @@
     --max-width: 1920px;
     --page-width: 1100px;
     --page-padding: 1rem;
+
+    --brand-hue: 266.53;
+
+    /* background-color: light-dark(rgb(132, 26, 26), rgb(70, 132, 26)); */
+    -webkit-tap-highlight-color: light-dark(hsla(0, 0%, 51%, 0.283), hsla(0, 0%, 33%, 0.283));
+    --background-color: light-dark(oklch(98% 0.008 var(--brand-hue)), oklch(0.20 0.006 var(--brand-hue)));
+    --darker-bg: light-dark(oklch(from var(--background-color) calc(l - 0.02) c h), oklch(from var(--background-color) calc(l - 0.02) c h));
+    --input-bg: light-dark(oklch(100% 0.00011 var(--brand-hue)), oklch(from var(--background-color) calc(l) c h));
+    --message-bg: light-dark(oklch(from var(--background-color) calc(l - 0.05) c h), oklch(from var(--background-color) calc(l + 0.05) c h));
+    --card-bg: light-dark(oklch(100% 0.00181 var(--brand-hue)), oklch(0.24 0.008 var(--brand-hue)));
+    --navbar-color: light-dark(oklch(97% 0.03 var(--brand-hue)), oklch(0.24 0.008 var(--brand-hue)));
+    --navbar-border: light-dark(oklch(90% 0.04962 var(--brand-hue)), #727272);
+    --canvas-color: light-dark(#fff, rgb(18, 18, 18));
+    --border: light-dark(oklch(85% 0.02 var(--brand-hue)), hsl(0, 0%, 20%));
+
+    --secondary: light-dark(hsl(0, 0%, 100%), hsl(0, 0%, 9%));
+    --foreground: light-dark(hsl(0, 0%, 95%), hsl(0, 0%, 95%));
+
+    --font-color: light-dark(rgb(23, 23, 23), oklch(0.95 0.01 var(--brand-hue)));
+
+    --selected-color: light-dark(oklch(0.96 0.05 var(--brand-hue)), #272a2e);
+    --active-button: light-dark(oklch(0.9 0.02 var(--brand-hue)), #424242);
+    --hover-color: light-dark(oklch(0.85 0.06 var(--brand-hue)), oklch(0.5 0.06 var(--brand-hue)));
+
+    --toast-bg: light-dark(oklch(97% 0.03 var(--brand-hue)), oklch(0.24 0.008 var(--brand-hue)));
+    --label-color: light-dark(#5f6368, #5f6368);
+    --btn-bg: light-dark(oklch(0.91 0.05 var(--brand-hue)), oklch(0.4 0.06 var(--brand-hue)));
+    --tag-bg: light-dark(var(--navbar-color), oklch(0.4 0.03 var(--brand-hue)));
+    --orange: light-dark(#ffcb88, #785b3e);
+    --blue: light-dark(#abd9ff, #3e5e78);
+    --grey: light-dark(#3d3d3d, #c2c2c2);
+    --red: light-dark(rgb(212, 166, 166), rgb(121, 84, 84));
+    --vibrant-red: light-dark(hsl(0, 92%, 75%), hsl(0, 45%, 30%));
+    --blue-bg: light-dark(#e2eafb, #596380);
+    --pink-bg: light-dark(#fbe2f4, #704e66);
+    --violet-bg: light-dark(#e3dbfa, #645c80);
+    --beige-bg: light-dark(#f6e2d4, #806959);
+    --green-bg: light-dark(rgb(184, 218, 184), rgb(84, 121, 84));
+    --title: light-dark(hsl(0, 0%, 15%), hsl(0, 0%, 85%));
+    --sub-title: light-dark(hsl(0, 0%, 5%, 0.5), hsl(0, 0%, 95%, 0.5));
+    --error-color: light-dark(rgb(187, 101, 101), rgb(187, 101, 101));
+
+    .primary-btn {
+        background-color: hsl(0, 0%, 96%);
+        color: hsl(0, 0%, 5%);
+    }
 }
 
 html {
@@ -107,48 +153,6 @@ textarea {
 
 .light {
     color-scheme: light;
-    -webkit-tap-highlight-color: hsla(0, 0%, 51%, 0.283);
-    --font-color: rgb(23, 23, 23);
-    --background-color: #fff;
-    --darker-bg: hsl(0, 0%, 99%);
-    --canvas-color: #fff;
-    --message-bg: #e7e7e7;
-    --navbar-color: #f8fbfd;
-    --navbar-border: #e3e5e7;
-    --selected-color: #ececec;
-    --hover-color: #e7e7e8;
-    --input-bg: #f7f7f7;
-    --active-button: #e0e0e0;
-    --toast-bg: #f8fbfd;
-    --primary: #e2e2e2;
-    --bright-text: #f9fafb;
-    --dark-text: #111827;
-    --border: #ddd;
-    --btn-bg: hsl(214, 100%, 82%);
-    --label-color: #5f6368;
-
-    --tag-bg: #e7e7e7;
-
-    --orange: #ffcb88;
-    --blue: #abd9ff;
-    --grey: #3d3d3d;
-    --red: rgb(212, 166, 166);
-
-    --vibrant-red: hsl(0, 92%, 75%);
-
-    --blue-bg: #e2eafb;
-    --pink-bg: #fbe2f4;
-    --violet-bg: #e3dbfa;
-    --beige-bg: #f6e2d4;
-    --green-bg: rgb(184, 218, 184);
-    --card-bg: hsl(0, 0%, 95%);
-    --foreground: hsl(0, 0%, 95%);
-    --secondary: hsl(0, 0%, 100%);
-
-    --title: hsl(0, 0%, 15%);
-    --sub-title: hsl(0, 0%, 5%, 0.5);
-    --error-color: rgb(187, 101, 101);
-    --success-color: rgb(122, 187, 101);
 
     .primary-btn {
         color: hsl(0, 0%, 99%);
@@ -159,57 +163,6 @@ textarea {
 .dark {
     color-scheme: dark;
 
-    --brand-hue: 266.53;
-
-    -webkit-tap-highlight-color: hsla(0, 0%, 33%, 0.283);
-    --background-color: oklch(0.20 0.006 var(--brand-hue));
-    --darker-bg: oklch(from var(--background-color) calc(l - 0.02) c h);
-    --input-bg: oklch(from var(--background-color) calc(l) c h);
-    
-    --secondary: hsl(0, 0%, 9%);
-    
-    /* this should be card color */
-    --foreground: hsl(0, 0%, 95%);
-    --font-color: oklch(0.95 0.01 var(--brand-hue));
-
-    --card-bg: oklch(0.24 0.008 var(--brand-hue));
-    --navbar-color: oklch(0.24 0.008 var(--brand-hue));
-    --canvas-color: rgb(18, 18, 18);
-    --message-bg: #272727;
-    --navbar-border: #727272;
-    --selected-color: #272a2e;
-    --hover-color: #353a3f;
-    --active-button: #424242;
-    --toast-bg: #333333;
-    --error-color: rgb(187, 101, 101);
-    --success-color: rgb(118, 187, 101);
-    --label-color: #5f6368;
-    --delete-hover-color: hsl(0, 100%, 100%);
-
-    --border: hsl(0, 0%, 20%);
-    --btn-bg: oklch(0.5 0.06 var(--brand-hue));
-    --tag-bg: #464646;
-
-    --orange: #785b3e;
-    --blue: #3e5e78;
-    --grey: #c2c2c2;
-    --red: rgb(121, 84, 84);
-
-    --vibrant-red: hsl(0, 45%, 30%);
-
-    --blue-bg: #596380;
-    --pink-bg: #704e66;
-    --violet-bg: #645c80;
-    --beige-bg: #806959;
-    --green-bg: rgb(84, 121, 84);
-
-    --title: hsl(0, 0%, 85%);
-    --sub-title: hsl(0, 0%, 95%, 0.5);
-    color: var(--font-color);
-    .primary-btn {
-        background-color: hsl(0, 0%, 96%);
-        color: hsl(0, 0%, 5%);
-    }
 }
 
 .primary-btn {
@@ -254,13 +207,13 @@ textarea:focus {
 
 .status[data-type='todo'] {
     background-color: var(--green-bg);
-    color: hsl(120, 100%, 11%);
+    color: light-dark(hsl(120, 30%, 25%), hsl(120, 100%, 11%));
     font-weight: bold;
 }
 
 .status[data-type='inprogress'] {
-    background-color: hsl(280, 20%, 50%);
-    color: hsl(280, 30%, 10%);
+    background-color: light-dark(hsl(280, 20%, 80%), hsl(280, 20%, 50%));
+    color: light-dark(hsl(280, 30%, 25%), hsl(280, 30%, 10%));
     font-weight: bold;
 }
 
@@ -270,34 +223,28 @@ textarea:focus {
     font-weight: bold;
 }
 
-.status[data-type='declined'] {
-    background-color: var(--red);
-    color: hsl(40, 100%, 11%);
-    font-weight: bold;
-}
-
 .status[data-type='pending'] {
-    background-color: hsl(33, 20%, 50%);
-    color: hsl(33, 30%, 10%);
+    background-color: light-dark(hsl(33, 20%, 80%), hsl(33, 20%, 50%));
+    color: light-dark(hsl(33, 30%, 25%), hsl(33, 30%, 10%));
     font-weight: bold;
 }
 
 .status[data-type='declined'] {
-    background-color: hsl(0, 20%, 50%);
-    color: hsl(30, 30%, 10%);
+    background-color: light-dark(hsl(0, 20%, 80%), hsl(0, 20%, 50%));
+    color: light-dark(hsl(0, 20%, 25%), hsl(30, 30%, 10%));
     font-weight: bold;
 }
 
 .status[data-type='accepted'] {
-    background-color: hsl(125, 20%, 50%);
-    color: hsl(125, 30%, 11%);
+    background-color: light-dark(hsl(125, 20%, 80%), hsl(125, 20%, 50%));
+    color: light-dark(hsl(125, 30%, 25%), hsl(125, 30%, 11%));
     font-weight: bold;
 }
 
 
 .status[data-type='cancelled'] {
-    background-color: hsl(0, 0%, 50%);
-    color: hsl(0, 0%, 11%);
+    background-color: light-dark(hsl(0, 0%, 80%), hsl(0, 0%, 50%));
+    color: light-dark(hsl(0, 0%, 25%), hsl(0, 0%, 11%));
     font-weight: bold;
 }
 
@@ -493,7 +440,7 @@ textarea:focus {
 }
 
 .card-padding {
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 @media (width >=600px) {

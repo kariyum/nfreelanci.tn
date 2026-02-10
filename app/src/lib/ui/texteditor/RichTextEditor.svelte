@@ -117,6 +117,7 @@
 	</div>
 	<div
 		bind:this={element}
+		style="border-radius: 5px;"
 		class="input-label editor-content"
 		onfocusin={() => (focused = true)}
 		onfocusout={() => (focused = false)}

@@ -33,6 +33,7 @@
 		border-radius: 15px;
 		opacity: 1;
 		transition-behavior: allow-discrete;
+		background-color: var(--background-color);
 	}
 
 	dialog[open] {
