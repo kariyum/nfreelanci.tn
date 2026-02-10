@@ -23,7 +23,7 @@
 						<div>Online</div>
 					</div>
 					<div>
-						<a href="{`/project/${task.project_id}/task/${task.id}`}">Back to Task Details</a>
+						<a href={`/project/${task.project_id}/task/${task.id}`}>Back to Task Details</a>
 					</div>
 				</div>
 				<Conversation {discussionId} {receivers} remoteMessages={messages} {user} />
@@ -32,8 +32,8 @@
 		<div class="right">
 			<div class="section">
 				<div class="card card-padding">
-					<h2>Regarding Task</h2>
-					<h1>{task.title}</h1>
+					<h3>Regarding Task</h3>
+					<h3>{task.title}</h3>
 					<div>
 						{@html task.content}
 					</div>
@@ -41,7 +41,7 @@
 			</div>
 			<div class="section">
 				<div class="card card-padding">
-					<h2>Application Proposal</h2>
+					<h3>Application Proposal</h3>
 					<div>{task.proposal_content || 'No Propsal Content'}</div>
 				</div>
 			</div>
@@ -77,16 +77,13 @@
 		<Conversation {discussionId} {receivers} remoteMessages={messages} {user} />
 	</div>
 {:else}
-	<div>Task / Proposal / User Not Found!</div>
-	task = {task}
-	proposal = {proposal}
-	user = {user}
+	<div>404 NOT FOUND!</div>
 {/if}
 
 <style>
 	.body {
 		display: grid;
-		grid-template-columns: 4fr 1fr;
+		grid-template-columns: 5fr 2fr;
 		margin: auto;
 	}
 	.section {
@@ -95,6 +92,10 @@
 
 	.without-context {
 		display: none;
+	}
+
+	.card-padding {
+		padding: 1rem;
 	}
 
 	@media (width < 600px) {

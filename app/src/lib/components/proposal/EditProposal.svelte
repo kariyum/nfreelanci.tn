@@ -61,6 +61,7 @@
 
 	.open-btn {
 		width: 100%;
-		border-radius: 0px 0px 15px 15px;
+		border: 0px;
+		border-radius: 0px;
 	}
 </style>

@@ -7,7 +7,7 @@
 
 {#snippet breadcrumbs()}
 	{#if !page.state.projectEditMode}
-		<div class="page-padding">
+		<div style="margin: 1rem;">
 			<div class="links">
 				<div class="link">
 					<a href="/">Projects</a>
@@ -51,13 +51,14 @@
 		display: flex;
 		margin: auto;
 		view-transition-name: links;
+		gap: 0.5rem;
 	}
 
 	.link {
 		display: flex;
 		gap: 0.5rem;
-		margin: 1rem 1rem 0rem 0rem;
 		color: var(--sub-title);
+		align-items: center;
 		> :last-child {
 			color: var(--font-color);
 		}

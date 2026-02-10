@@ -166,7 +166,7 @@
 </script>
 
 {#snippet deleteButton()}
-	<div>Delete</div>
+	<div>Delete Project</div>
 {/snippet}
 {#snippet submitButton()}
 	<div>{projectIn ? 'Update Project' : 'Save Project'}</div>
