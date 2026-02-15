@@ -2,13 +2,13 @@
 	import { goto, invalidate } from '$app/navigation';
 	import { TaskClass } from '$lib/components/task/states.svelte';
 	import { validateObject, type ValidationErrors } from '$lib/object-validator';
-	import type { ProjectForm, ProjectGET, ProjectPOST } from '$lib/types/project';
-	import type { TaskPOST } from '$lib/types/task';
+	import type { TaskPOST } from '$lib/features/task/models';
 	import { Validator } from '$lib/validator';
 	import { Plus } from 'lucide-svelte';
-	import AsyncButton from '../button/AsyncButton.svelte';
+	import AsyncButton from '../../ui/button/AsyncButton.svelte';
 	import Skills from '../skills/Skills.svelte';
 	import RichTextEditor from '../../ui/texteditor/RichTextEditor.svelte';
+	import type { ProjectForm, ProjectGET, ProjectPOST } from '$lib/features/project/models';
 
 	let {
 		projectIn

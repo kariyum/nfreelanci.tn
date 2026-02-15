@@ -1,28 +1,20 @@
 <script lang="ts">
-	import { goto, invalidate, invalidateAll } from '$app/navigation';
-	import { WebSocketService } from '$lib/websocketservice';
+	import { goto, invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import type {
-		BaseNotification,
-		MessagesJsonResponse,
-		NewProposalNotification,
-		ProposalNotification,
-		User
-	} from '$lib/types';
+
 	import ThemeToggler from '../utility/ThemeToggler.svelte';
 	import NotificationMenu from '../notification/NotificationMenu.svelte';
 	import Toast from '../notification/Toast.svelte';
+	import { Bell, CirclePlus, House, LogOut, Menu, Settings } from 'lucide-svelte';
+	import type { BaseNotification } from '$lib/features/notification/apis';
 	import {
-		Bell,
-		CirclePlus,
-		Home,
-		LogOut,
-		Menu,
-		MessageCircle,
-		PackagePlus,
-		Settings
-	} from 'lucide-svelte';
+		type ProposalNotification,
+		type NewProposalNotification,
+		type MessagesJsonResponse,
+		WebSocketService
+	} from '$lib/features/notification/socket';
+	import type { User } from '$lib/features/auth/apis';
 
 	let { user, notifications }: { user: User; notifications: BaseNotification[] } = $props();
 	let webSocketService: WebSocketService;
@@ -153,7 +145,7 @@
 		<div class="mobile">
 			<li>
 				<a href="/"
-					><Home />
+					><House />
 					<div>Home</div></a
 				>
 			</li>
@@ -230,7 +222,7 @@
 	</ul>
 {/snippet}
 
-<section>
+<section style="view-transition-name: header;">
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<div class="container">
 		<h1 class="header">

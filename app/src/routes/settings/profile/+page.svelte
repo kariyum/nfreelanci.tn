@@ -7,12 +7,6 @@
 
 	let { data } = $props();
 
-	onMount(async () => {
-		if (data.error?.unauthorizedError) {
-			await goto('/', { invalidateAll: true });
-		}
-	});
-
 	const switchToProfileEditMode = () => {
 		pushState('', {
 			profileEditMode: true,

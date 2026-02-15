@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Conversation from '$lib/components/conversation/Conversation.svelte';
-	import { type User } from '$lib/types';
-	import { type TaskGET } from '$lib/types/task';
+	import { type User } from '$lib/features/auth/apis';
+	import { type TaskGET } from '$lib/features/task/models';
 	import { type ProposalGET } from '../../../+layout';
 
 	let { data } = $props();

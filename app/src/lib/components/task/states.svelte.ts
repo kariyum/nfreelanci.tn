@@ -1,7 +1,7 @@
 // used for storing added tasks that are not saved yet!
 
-import type { TaskForm } from "$lib/types";
-import type { TaskGET } from "$lib/types/task";
+import type { TaskForm } from "$lib/features/project/models";
+import type { TaskGET } from "$lib/features/task/models";
 
 export class TaskClass {
     title: string = $state('');

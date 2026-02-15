@@ -1,5 +1,4 @@
-import { processTaskJson } from "./task";
-import type { TaskJSON, TaskGET, TaskPOST } from "./task";
+import type { TaskGET, TaskJSON, TaskPOST } from "../task/models";
 
 export interface ProjectJSON {
     id: number;
@@ -34,26 +33,17 @@ export interface ProjectPOST {
     tasks?: Array<TaskPOST>;
 }
 
-// used to fill out the form since everything is a string there
+export interface TaskForm {
+    title?: string;
+    content?: string;
+    deadline?: string;
+    budget?: number;
+    skills?: string[];
+}
+
 export interface ProjectForm {
     title: string;
     content: string;
     budget: number;
     deadline: string;
 }
-
-export function processProjectJson(json: ProjectJSON): ProjectGET {
-    const project: ProjectGET = {
-        id: json.id,
-        user_id: json.user_id.toString(),
-        title: json.title,
-        budget: json.budget,
-        currency_code: json.currency_code,
-        content: json.content,
-        created_at: new Date(json.created_at),
-        deadline: new Date(json.deadline),
-        tasks: json.tasks?.map((task) => processTaskJson(task)),
-    }
-    return project;
-}
-

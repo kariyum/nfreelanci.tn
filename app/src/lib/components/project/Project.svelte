@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ProjectGET } from '$lib/types/project';
+	import type { ProjectGET } from '$lib/features/project/models';
 	import { capitalize, formatBudget, formatDateSentence } from '$lib/utils';
 	let { project }: { project: ProjectGET } = $props();
 

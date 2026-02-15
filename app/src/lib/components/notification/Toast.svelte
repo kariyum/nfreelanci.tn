@@ -2,15 +2,16 @@
 	import { fly } from 'svelte/transition';
 	import type { ToastInterface } from '../navbar/Navbar.svelte';
 	import { untrack } from 'svelte';
-	import {
-		type NewProposalNotification,
-		NewProposalNotificationImpl,
-		type ProposalNotification,
-		ProposalNotificationImpl
-	} from '$lib/types';
+
 	import Progress from './Progress.svelte';
 	import { X } from 'lucide-svelte';
 	import { SvelteMap } from 'svelte/reactivity';
+	import {
+		type ProposalNotification,
+		ProposalNotificationImpl,
+		type NewProposalNotification,
+		NewProposalNotificationImpl
+	} from '$lib/features/notification/socket';
 
 	const TIMEOUT = 3000;
 	let isPaused: boolean = $state(false);

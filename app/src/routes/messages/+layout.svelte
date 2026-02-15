@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { WebSocketService } from '$lib/websocketservice.js';
-	import type { MessagesJsonResponse } from '$lib/types.js';
 	import { CircleUserRound } from 'lucide-svelte';
 	import { onDestroy, onMount, untrack } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { WebSocketService, type MessagesJsonResponse } from '$lib/features/notification/socket.js';
 
 	let { data, children } = $props();
 	const selectedDiscussion: string | undefined = $derived(page.params.id);

@@ -25,24 +25,22 @@
 		);
 	</script>
 </svelte:head>
-{#if data.user}
-	<div class="transition-header">
-		<Navbar user={data.user} notifications={data.notifications} />
-	</div>
+
+{#if data.user && data.notifications.isOk()}
+	<Navbar user={data.user} notifications={data.notifications.unwrap()} />
 	<div class="container">
 		{@render children()}
 	</div>
+{:else if data.user && data.notifications.isErr()}
+	<div>Oupsie... failed to fetch notifications. Refresh the page please!</div>
 {:else}
-	<div class="container transition-header">
+	<div class="container">
 		<NavbarNewUser></NavbarNewUser>
 	</div>
 	{@render children()}
 {/if}
 
 <style>
-	.transition-header {
-		view-transition-name: header;
-	}
 	.container {
 		margin: auto;
 		max-width: var(--max-width);

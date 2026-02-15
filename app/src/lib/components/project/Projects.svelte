@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import Project from '$lib/components/project/Project.svelte';
-	import type { ProjectGET } from '$lib/types/project';
+	import type { ProjectGET } from '$lib/features/project/models';
 	import { untrack } from 'svelte';
 	let { projects }: { projects: ProjectGET[] } = $props();
 

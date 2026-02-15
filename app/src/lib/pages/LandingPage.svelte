@@ -1,6 +1,5 @@
 <script>
 	import Footer from '$lib/components/navbar/Footer.svelte';
-	import NavbarNewUser from '$lib/components/navbar/NavbarNewUser.svelte';
 
 	let cards = [
 		{
@@ -172,6 +171,7 @@
 	li {
 		background-color: var(--card-bg);
 		border-radius: 10px;
+		border: 1px solid var(--border);
 		padding: 2rem;
 		text-align: center;
 		position: relative;
