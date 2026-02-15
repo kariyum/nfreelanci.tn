@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { type BaseNotification } from '$lib/features/notification/apis';
 	import {
-		type NewProposalNotification,
-		NewProposalNotificationImpl,
 		type ProposalNotification,
 		ProposalNotificationImpl,
-		type BaseNotification
-	} from '$lib/types';
+		type NewProposalNotification,
+		NewProposalNotificationImpl
+	} from '$lib/features/notification/socket';
 	import { computeTimeAgo } from '$lib/utils';
 
 	let { notifications }: { notifications: BaseNotification[] } = $props();

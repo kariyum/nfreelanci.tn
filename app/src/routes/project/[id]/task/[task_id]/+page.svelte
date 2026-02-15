@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
-	import { type TaskGET } from '$lib/types/task.js';
+	import { type TaskGET } from '$lib/features/task/models.js';
 	import { formatDate, snakeToCapital } from '$lib/utils.js';
 	import { MessageCircle, SquarePen, Trash } from 'lucide-svelte';
 	import type { ProposalGET } from './+layout.js';

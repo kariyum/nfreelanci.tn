@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { Tab } from '$lib/types';
 
@@ -8,7 +7,7 @@
 	}
 	let { tabs }: Props = $props();
 	let tabQueryParameter = $derived(page.url.searchParams.get('tabs'));
-	let firstTab = tabs[0].snippet;
+	let firstTab = $derived(tabs[0].snippet);
 	let selectedTab = $derived(tabs.find((tab) => tab.tab == tabQueryParameter)?.snippet ?? firstTab);
 	let pathname = $derived(page.url.pathname + page.url.search);
 </script>

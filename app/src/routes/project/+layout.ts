@@ -1,4 +1,4 @@
-import { processProjectJson } from '$lib/types/project';
+import { projectService } from '$lib/features/project/apis';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async ({ fetch, params }) => {
@@ -8,22 +8,8 @@ export const load: LayoutLoad = async ({ fetch, params }) => {
             project: undefined,
         }
     }
-    const request = await fetch(`/api/projects/${params.id}`);
-    if (!request.ok) return {
-        status: request.status,
-        error: new Error('Failed to fetch data'),
-    }
-    try {
-        const response = await request.json();
-        const project = processProjectJson(response);
-        return {
-            status: request.status,
-            project: project,
-        }
-    } catch (error) {
-        return {
-            status: request.status,
-            error: new Error('Failed to parse data'),
-        }
+    const project = await projectService(fetch).getById(params.id);
+    return {
+        project: project.unwrap()
     }
 };

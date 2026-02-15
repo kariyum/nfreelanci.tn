@@ -5,5 +5,5 @@
 </script>
 
 <div class="page-container">
-	<NotificationMenu notifications={data.notifications} />
+	<NotificationMenu notifications={data.notifications.getOrElse([])} />
 </div>

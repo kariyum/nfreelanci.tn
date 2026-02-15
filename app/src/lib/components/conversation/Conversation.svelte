@@ -2,10 +2,11 @@
 	import { onDestroy } from 'svelte';
 	import { tick } from 'svelte';
 	import { SendHorizontal } from 'lucide-svelte';
-	import { WebSocketService } from '$lib/websocketservice.js';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import type { ClientMessage, Discussion, MessagesJsonResponse, User } from '$lib/types.js';
+	import type { ClientMessage } from '$lib/types.js';
+	import type { User } from '$lib/features/auth/apis';
+	import { WebSocketService, type MessagesJsonResponse } from '$lib/features/notification/socket';
 
 	const {
 		receivers,

@@ -2,7 +2,7 @@
 	import ThemeToggler from '$lib/components/utility/ThemeToggler.svelte';
 </script>
 
-<div class="navbar">
+<div class="navbar" style="view-transition-name: header">
 	<!-- svelte-ignore a11y_consider_explicit_label -->
 	<a class="left-group" href="/">
 		<div class="logo"></div>

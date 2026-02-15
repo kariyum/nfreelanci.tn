@@ -1,4 +1,4 @@
-import type { TaskGET } from "$lib/types/task.js";
+import type { TaskGET } from "$lib/features/task/models";
 import { fetchIntoResult } from "$lib/utils.js";
 
 export interface ProposalJSON {

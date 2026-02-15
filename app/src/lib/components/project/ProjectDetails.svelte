@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import type { User } from '$lib/types';
-	import type { ProjectGET } from '$lib/types/project';
+	import type { User } from '$lib/features/auth/apis';
+	import type { ProjectGET } from '$lib/features/project/models';
 	import { formatBudget, formatDate, formatDateSentence, snakeToCapital } from '$lib/utils';
 	import { Calendar, HandCoins, SquarePen, UserRound } from 'lucide-svelte';
 
@@ -12,7 +12,6 @@
 	}
 	let { projectIn, user, onEdit }: props = $props();
 	let userIsCreator = $derived(user?.email == projectIn.user_id);
-
 </script>
 
 {#snippet tasksSnippet()}

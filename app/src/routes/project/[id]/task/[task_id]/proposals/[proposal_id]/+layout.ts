@@ -1,4 +1,4 @@
-import type { MessagesJsonResponse } from '$lib/types.js';
+import type { MessagesJsonResponse } from '$lib/features/notification/socket';
 import { fetchIntoResult } from '$lib/utils.js';
 
 interface LightMessageJson {

@@ -3,12 +3,12 @@
 	let { data } = $props();
 </script>
 
-{#if data.error}
-	We encountered an error {data.error}
-{:else}
+{#if data.projects.isOk()}
 	<div class="container">
-		<Projects projects={data.projects}></Projects>
+		<Projects projects={data.projects.unwrap()}></Projects>
 	</div>
+{:else}
+	<div>Oupsie... failed to serve your request.</div>
 {/if}
 
 <style>

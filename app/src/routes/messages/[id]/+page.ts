@@ -1,4 +1,4 @@
-import type { MessagesJsonResponse } from "$lib/types";
+import type { MessagesJsonResponse } from "$lib/features/notification/socket";
 
 export const load = async ({ fetch, params }) => {
     const response = await fetch(`/api/messages/${params.id}`);

@@ -4,13 +4,13 @@
 	let { data } = $props();
 </script>
 
-{#if !data.user}
-	<LandingPage></LandingPage>
-{:else if data.error}
-	<h1>You seem to be offline...</h1>
-{:else}
-	{@const projects = data.projects}
+{#if data.user && data.projects.isOk()}
+	{@const projects = data.projects.unwrap()}
 	<div class="page-container">
 		<Projects {projects}></Projects>
 	</div>
+{:else if data.userError?.unauthorizedError}
+	<LandingPage></LandingPage>
+{:else}
+	<div>You seem to be offline...</div>
 {/if}
