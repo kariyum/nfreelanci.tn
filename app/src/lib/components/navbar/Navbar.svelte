@@ -7,14 +7,14 @@
 	import NotificationMenu from '../notification/NotificationMenu.svelte';
 	import Toast from '../notification/Toast.svelte';
 	import { Bell, CirclePlus, House, LogOut, Menu, Settings } from 'lucide-svelte';
-	import type { BaseNotification } from '$lib/features/notification/apis';
+	import type { BaseNotification } from '$lib/features/notification/client';
 	import {
 		type ProposalNotification,
 		type NewProposalNotification,
 		type MessagesJsonResponse,
 		WebSocketService
 	} from '$lib/features/notification/socket';
-	import type { User } from '$lib/features/auth/apis';
+	import type { User } from '$lib/features/auth/client';
 
 	let { user, notifications }: { user: User; notifications: BaseNotification[] } = $props();
 	let webSocketService: WebSocketService;
@@ -152,7 +152,7 @@
 		</div>
 		{#if user.role === 'recruiter'}
 			<li>
-				<a href="/project"
+				<a href="/projects/create"
 					><CirclePlus />
 					<div>Create a project</div></a
 				>
@@ -196,7 +196,7 @@
 {#snippet menuDesktop()}
 	<ul>
 		{#if user.role === 'recruiter'}
-			<li><a href="/project">Create a project</a></li>
+			<li><a href="/projects/create">Create a project</a></li>
 		{/if}
 		<!-- <li><a href="/messages">Discussions</a></li> -->
 		<li class="notifications desktop" bind:this={liNotification}>

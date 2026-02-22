@@ -19,7 +19,7 @@ const processNotifications = (baseNotificationJSON: BaseNotificationJSON) => {
     } as BaseNotification;
 }
 
-export const notificationService = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+export const notificationClient = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
     return {
         get: async () => {
             const response = await fetchIntoResult<BaseNotificationJSON[]>(() => fetch("/api/notifications"));

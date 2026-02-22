@@ -1,4 +1,4 @@
-import type { ProposalStatus } from "$lib/apis/proposal";
+export type ProposalStatus = "declined" | "approved" | "pending" | "cancelled";
 
 export interface TaskJSON {
     id: number,

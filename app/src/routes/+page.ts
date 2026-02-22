@@ -1,9 +1,7 @@
-import { projectService } from "$lib/features/project/apis.js";
+import { projectClient } from "$lib/features/project/client.js";
 
 export async function load({ fetch }) {
-    const projects = await projectService(fetch).get();
-
     return {
-        projects: projects,
+        projects: await projectClient(fetch).get(),
     };
 }

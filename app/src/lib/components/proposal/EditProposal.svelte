@@ -44,7 +44,7 @@
 	{/snippet}
 	{#snippet dialogBody(onClose: () => void, onSubmit: () => void)}
 		<h2>Edit Proposal</h2>
-		<Input label="Budget" bind:value={budget} required={true}></Input>
+		<Input label="Budget" bind:value={budget} required={true} margin="1.2rem"></Input>
 		<Textarea label="Content" bind:value={content} required={true}></Textarea>
 		<div class="actions">
 			<button class="cancel-btn" onclick={onClose}>Close</button>

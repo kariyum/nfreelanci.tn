@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import Skills from '$lib/components/skills/Skills.svelte';
-	import type { ProfileGET } from '../../../routes/settings/+layout';
+	import type { ProfileGET } from '$lib/features/profiles/models';
 
 	type Props = {
 		user: ProfileGET;

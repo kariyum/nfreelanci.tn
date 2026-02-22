@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
-	import type { User } from '$lib/features/auth/apis';
+	import type { User } from '$lib/features/auth/client';
 	import type { ProjectGET } from '$lib/features/project/models';
-	import { formatBudget, formatDate, formatDateSentence, snakeToCapital } from '$lib/utils';
+	import { formatBudget, formatDateSentence, snakeToCapital } from '$lib/utils';
 	import { Calendar, HandCoins, SquarePen, UserRound } from 'lucide-svelte';
+	import Tasks from '../task/Tasks.svelte';
 
 	interface props {
 		projectIn: ProjectGET;
@@ -13,83 +13,6 @@
 	let { projectIn, user, onEdit }: props = $props();
 	let userIsCreator = $derived(user?.email == projectIn.user_id);
 </script>
-
-{#snippet tasksSnippet()}
-	{#if projectIn.tasks?.length !== 0}
-		<div class="tasks-container">
-			{#each projectIn.tasks?.sort((a, b) => a.id - b.id) ?? [] as task}
-				<a
-					class="reset card task hover-effect"
-					id={task.id.toString()}
-					href={`/project/${projectIn.id}/task/${task.id}`}
-				>
-					<div class="padding-no-buttom">
-						<div class="detail">
-							<h3>{task.title}</h3>
-							<div class="status" data-type={task.status}>
-								{snakeToCapital(task.status)}
-							</div>
-						</div>
-						<div class="task-content rich-content">
-							{#if task.content.length === 0}
-								<div>No content for this task</div>
-							{:else}
-								{@html task.content}
-							{/if}
-						</div>
-						<div class="icons">
-							<div>
-								<UserRound size="14" />
-								{task.assignee_id}
-							</div>
-							<div>
-								<Calendar size="14" />
-								{formatDateSentence(task.created_at)}
-							</div>
-							<div>
-								<HandCoins size="14" />
-								{formatBudget(task.budget)}
-							</div>
-						</div>
-					</div>
-					<div class="skills">
-						<span>Skills: </span>
-						<div class="flex-row" style="flex-wrap: wrap;">
-							{#if task.skills.length === 0}
-								<div>No skills required.</div>
-							{:else}
-								{#each task.skills as skill}
-									<div class="skill">{skill}</div>
-								{/each}
-							{/if}
-						</div>
-					</div>
-
-					<!-- {#if user?.role === 'freelancer'}
-						<button
-							class="apply-btn"
-							disabled={task.proposal_status != undefined}
-							data-status={task.proposal_status}
-							onclick={() => submitApplication(task.id)}
-						>
-							{#if task.proposal_status}
-								Application {snakeToCapital(task.proposal_status)}
-							{:else}
-								Submit Application
-							{/if}
-						</button>
-					{:else if user?.role === 'recruiter' && userIsCreator}
-						<div class="view-link">
-							<a href={`/project/${projectIn.id}/task/${task.id}`}>View</a>
-						</div>
-					{/if} -->
-				</a>
-			{/each}
-		</div>
-	{:else}
-		<div>No tasks are available for this project yet!</div>
-	{/if}
-{/snippet}
 
 <div class="container">
 	<div class="sub-container">
@@ -111,7 +34,7 @@
 				</div>
 				<h2>Tasks ({projectIn.tasks?.length || 0})</h2>
 				<div>
-					{@render tasksSnippet()}
+					<Tasks tasks={projectIn.tasks ?? []}></Tasks>
 				</div>
 			</div>
 			<div class="column" style="flex-grow: 1;">

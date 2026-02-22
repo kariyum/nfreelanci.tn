@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Conversation from '$lib/components/conversation/Conversation.svelte';
-	import { type User } from '$lib/features/auth/apis';
+	import { type User } from '$lib/features/auth/client';
+	import { type ProposalGET } from '$lib/features/proposals/models.js';
 	import { type TaskGET } from '$lib/features/task/models';
-	import { type ProposalGET } from '../../../+layout';
 
 	let { data } = $props();
 	let task = $derived(data.task);
@@ -23,7 +23,7 @@
 						<div>Online</div>
 					</div>
 					<div>
-						<a href={`/project/${task.project_id}/task/${task.id}`}>Back to Task Details</a>
+						<a href={`/projects/${task.project_id}/tasks/${task.id}`}>Back to Task Details</a>
 					</div>
 				</div>
 				<Conversation {discussionId} {receivers} remoteMessages={messages} {user} />

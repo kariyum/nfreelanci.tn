@@ -1,4 +1,4 @@
-import type { BaseNotification, NotificationType } from "./apis";
+import type { BaseNotification, NotificationType } from "./client";
 
 export interface MessagesJsonResponse extends BaseNotification {
     id: number,
@@ -33,7 +33,7 @@ export interface NewProposalNotification extends BaseNotification {
 export class NewProposalNotificationImpl {
     static getHref(notif: NewProposalNotification) {
         // reroute to project and scroll to the task
-        return `/project/${notif.content.project_id}/task/${notif.content.task_id}#${notif.content.proposal_id}`;
+        return `/projects/${notif.content.project_id}/tasks/${notif.content.task_id}#${notif.content.proposal_id}`;
     }
 
     static getContent(notif: NewProposalNotification) {
@@ -44,7 +44,7 @@ export class NewProposalNotificationImpl {
 export class ProposalNotificationImpl {
     static getHref(notif: ProposalNotification) {
         // reroute to project and scroll to the task
-        return `/project/${notif.content.project_id}#${notif.content.task_id}`;
+        return `/projects/${notif.content.project_id}#${notif.content.task_id}`;
     }
 
     static getContent(notif: ProposalNotification) {

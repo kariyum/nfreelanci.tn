@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { Settings, User } from 'lucide-svelte';
 
-	let { children, data } = $props();
+	let { children } = $props();
 	let onPage = $derived(page.url.pathname.slice(1).split('/')[1]);
 	const pageToHeader = new Map([
 		['profile', 'Public Profile'],

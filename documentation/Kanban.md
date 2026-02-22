@@ -41,15 +41,16 @@ kanban-plugin: board
 
 ## p1
 
+- [ ] sending email capabilities
 - [ ] forgot password
 - [ ] google login
 - [ ] add freelancer feature to see ongoing tasks for him
-- [ ] sending email capabilities
 - [ ] rename urls. Use projects/{id} instead of project/{id}. Plural vs Singular. Plural is the REST standard
 - [ ] add on chat message notification
 - [ ] discussion page man, get it done well
 - [ ] freelancer specify budget
 - [ ] freelancer specify proposal message
+- [ ] add pagination
 
 
 ## doing

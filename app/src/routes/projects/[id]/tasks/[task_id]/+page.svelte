@@ -3,13 +3,16 @@
 	import { type TaskGET } from '$lib/features/task/models.js';
 	import { formatDate, snakeToCapital } from '$lib/utils.js';
 	import { MessageCircle, SquarePen, Trash } from 'lucide-svelte';
-	import type { ProposalGET } from './+layout.js';
 	import { page } from '$app/state';
 	import EditProposal from '$lib/components/proposal/EditProposal.svelte';
+	import type { ProposalGET } from '$lib/features/proposals/models.js';
 
 	let { data } = $props();
 	let task = $derived(data.task);
 	let proposals: ProposalGET[] | undefined = $derived(data.proposals);
+	let isTaskOwner: boolean = $derived(
+		(data.user && data.projectOwner === data.user.email) || false
+	);
 	const filterProposalsOnStatus = (proposals: ProposalGET[], status: string) =>
 		proposals?.filter((prop) => prop.status.toLowerCase() === status);
 
@@ -35,7 +38,7 @@
 			body: JSON.stringify(payload)
 		});
 		if (response.ok) {
-			await invalidate(`/api/projects/${data.project?.id}`);
+			await invalidate(`/api/projects/${page.params.id}`);
 		} else {
 			alert('Failed to submit proposal!');
 		}
@@ -58,7 +61,7 @@
 			body: JSON.stringify(payload)
 		});
 		if (response.ok) {
-			await invalidate(`/api/projects/${projectId}/task/${taksId}/proposals`);
+			await invalidate(`/api/projects/${projectId}/tasks/${taksId}/proposals`);
 			await invalidate(`/api/projects/${projectId}`);
 		} else {
 			// todo show error banner
@@ -90,7 +93,7 @@
 				<div class="row">
 					<div>{proposal.user_id}</div>
 					<a
-						href={`/project/${page.params.id}/task/${proposal.task_id}/proposals/${proposal.id}/discussion`}
+						href={`/projects/${page.params.id}/tasks/${proposal.task_id}/proposals/${proposal.id}/discussion`}
 						class="reset"><MessageCircle size="14" /></a
 					>
 				</div>
@@ -222,7 +225,7 @@
 							</div>
 						</div>
 					</div>
-					{#if data.project?.user_id === data.user?.email}
+					{#if isTaskOwner}
 						<div class="column">
 							<div class="card">
 								<h2 style="padding: 1rem; padding-bottom:0;">Task Actions</h2>
@@ -230,13 +233,7 @@
 									<button
 										class="row"
 										onclick={async () => {
-											await goto(`/project/${data.project?.id}`, {
-												state: {
-													projectEditMode: true,
-													showTaskPopup: false,
-													profileEditMode: false
-												}
-											});
+											await goto(`/projects/${page.params.id}/edit`);
 										}}
 									>
 										<div class="icon">
@@ -334,7 +331,7 @@
 								>
 									<h2>About the Recruiter</h2>
 									<a
-										href={`/project/${task.project_id}/task/${task.id}/proposals/${task.proposal_id}/discussion`}
+										href={`/projects/${task.project_id}/tasks/${task.id}/proposals/${task.proposal_id}/discussion`}
 										class="reset-a"
 									>
 										<MessageCircle size="14" />
@@ -343,20 +340,20 @@
 								<div class="avatar-container">
 									<div
 										class="avatar"
-										data-content={data.project?.user_id.charAt(0).toUpperCase()}
+										data-content={data.projectOwner.charAt(0).toUpperCase()}
 									></div>
 									<div>
 										<div style="font-weight: bold; font-size:large;">
-											{data.project?.user_id.split('@')[0]}
+											{data.projectOwner.split('@')[0]}
 										</div>
-										<div>{data.project?.user_id}</div>
+										<div>{data.projectOwner}</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					{/if}
 				</div>
-				{#if data.project?.user_id === data.user?.email}
+				{#if isTaskOwner}
 					{@render applications(task)}
 				{/if}
 			</div>
