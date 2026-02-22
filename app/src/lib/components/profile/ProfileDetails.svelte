@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { User } from 'lucide-svelte';
-	import type { ProfileGET } from '../../../routes/settings/+layout';
 	import { capitalize } from '$lib/utils';
+	import type { ProfileGET } from '$lib/features/profiles/models';
 
 	type Props = {
 		profile: ProfileGET;

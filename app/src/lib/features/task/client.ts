@@ -1,5 +1,5 @@
-import type { ProposalStatus } from "$lib/apis/proposal";
 import type { TaskGET, TaskJSON } from "./models";
+import { fetchIntoResult } from "$lib/utils";
 
 export function processTaskJson(json: TaskJSON) {
     const result: TaskGET = {
@@ -20,4 +20,12 @@ export function processTaskJson(json: TaskJSON) {
         proposal_budget: json.proposal_budget,
     };
     return result;
+}
+
+export type ProposalStatus = "declined" | "approved" | "pending" | "cancelled";
+
+export const taskClient = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+    return {
+        
+    }
 }

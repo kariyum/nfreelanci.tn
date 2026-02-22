@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import type { ClientMessage } from '$lib/types.js';
-	import type { User } from '$lib/features/auth/apis';
+	import type { User } from '$lib/features/auth/client';
 	import { WebSocketService, type MessagesJsonResponse } from '$lib/features/notification/socket';
 
 	const {

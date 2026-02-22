@@ -1,6 +1,7 @@
 import type { Snippet } from "svelte";
 import type { NetworkError, TimeoutError, ClientError, ServerError, ParsingError, UnauthorizedError, NotFound } from "./utils";
 
+export type Fetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
 export type ClientMessage = {
     discussion_id: number,

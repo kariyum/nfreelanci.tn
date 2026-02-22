@@ -1,4 +1,4 @@
-import { processTaskJson } from "../task/service";
+import { processTaskJson } from "../task/client";
 import type { ProjectJSON, ProjectGET } from "./models";
 
 export function processProjectJson(json: ProjectJSON): ProjectGET {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type BaseNotification } from '$lib/features/notification/apis';
+	import { type BaseNotification } from '$lib/features/notification/client';
 	import {
 		type ProposalNotification,
 		ProposalNotificationImpl,

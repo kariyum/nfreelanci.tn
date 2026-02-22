@@ -1,0 +1,32 @@
+import { fetchIntoResult } from "$lib/utils";
+import type { ProposalGET, ProposalJSON } from "./models";
+
+function processProposalJSON(json: ProposalJSON) {
+    const result: ProposalGET = {
+        ...json,
+        created_at: new Date(json.created_at)
+    }
+    return result;
+}
+
+export const proposalsClient = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+    return {
+        getByProductIdTaskId: async (productId: string, taskId: string) => {
+            const proposalsResult = await fetchIntoResult<ProposalJSON[]>(() => fetch(`/api/projects/${productId}/task/${taskId}/proposals`, { method: "GET" }));
+            return proposalsResult.map((proposalsJson) => proposalsJson.map(processProposalJSON));
+        },
+        patchProposalStatus: async (proposalId: number, action: string) => {
+            const payload = {
+                action
+            };
+            const response = await fetchIntoResult(() => fetch(`/api/proposals/${proposalId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }));
+            return response;
+        }
+    }
+}

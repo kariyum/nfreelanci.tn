@@ -1,13 +1,13 @@
-import { authService } from '$lib/features/auth/apis.js';
-import { notificationService, type BaseNotification } from '$lib/features/notification/apis.js';
+import { authClient } from '$lib/features/auth/client.js';
+import { notificationClient } from '$lib/features/notification/client.js';
 
 export async function load({ fetch }) {
-  const userResponse = await authService(fetch).get();
-  const notificationsResponse = await notificationService(fetch).get();
-
+  const userResponse = await authClient(fetch).get();
+  const notifications = await notificationClient(fetch).get();
+  
   return {
     user: userResponse.value,
     userError: userResponse.error,
-    notifications: notificationsResponse,
+    notifications: notifications,
   }
 }

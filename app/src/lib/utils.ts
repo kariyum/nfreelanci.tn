@@ -190,8 +190,16 @@ export async function fetchIntoResult<T>(fetch: () => Promise<Response>): Promis
         }
         return Result.err<T, FetchErrors>({ networkError: new NetworkError(`Fetch error ${response.status}`) });
       }
-      // TODO add check on the content type and handle text and json cases
-      return response.json().then(data => Result.ok<T, FetchErrors>(data)).catch(() => Result.err<T, FetchErrors>({ parsingError: new ParsingError('Parsing error') }));
+
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return response.json()
+          .then(data => Result.ok<T, FetchErrors>(data))
+          .catch(() => Result.err<T, FetchErrors>({ parsingError: new ParsingError('Parsing error') }));
+      } else {
+        return response.text()
+          .then((text) => Result.ok<T, FetchErrors>(text as T));
+      }
     })
     .catch(error => {
       return Result.err<T, FetchErrors>({ networkError: new NetworkError(error.message) });

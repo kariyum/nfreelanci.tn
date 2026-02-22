@@ -1,14 +1,11 @@
 <script lang="ts">
 	import LandingPage from '$lib/pages/LandingPage.svelte';
-	import Projects from '$lib/components/project/Projects.svelte';
+	import RootPage from '$lib/pages/RootPage.svelte';
 	let { data } = $props();
 </script>
 
-{#if data.user && data.projects.isOk()}
-	{@const projects = data.projects.unwrap()}
-	<div class="page-container">
-		<Projects {projects}></Projects>
-	</div>
+{#if data.user}
+	<RootPage projects={data.projects}></RootPage>
 {:else if data.userError?.unauthorizedError}
 	<LandingPage></LandingPage>
 {:else}

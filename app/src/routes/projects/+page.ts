@@ -1,11 +1,8 @@
-// when this API is invalidated for some reason 
-// the component is not re-rendered if the load function runs only on the server
-
-import { projectService } from "$lib/features/project/apis.js";
+import { projectClient } from "$lib/features/project/client.js";
 
 export async function load({ fetch, url }) {
     let searchQuery = url.searchParams.get("q")
-    const projects = await projectService(fetch).search(searchQuery);
+    const projects = await projectClient(fetch).search(searchQuery);
 
     return {
         projects: projects,

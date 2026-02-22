@@ -10,11 +10,11 @@ export interface User {
     role: "freelancer" | "recruiter"
 }
 
-export const authService = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+export const authClient = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
     return {
         get: async () => {
-            const response = await fetchIntoResult<UserJson>(() => fetch("/api/auth/whoami"));
-            const parsedResponse = response.map((userJson) => {
+            const claimsResponse = await fetchIntoResult<UserJson>(() => fetch("/api/auth/whoami"));
+            const parsedResponse = claimsResponse.map((userJson) => {
                 return {
                     email: userJson.sub,
                     role: userJson.role

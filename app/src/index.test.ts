@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { validateObject, type ValidationSchema } from './lib';
 import { Validator } from './lib/validator';
+import { type ValidationSchema, validateObject } from '$lib/object-validator';
 
 describe('validateObject', () => {
     it('should return an empty object if the object is valid', () => {

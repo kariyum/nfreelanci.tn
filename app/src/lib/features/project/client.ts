@@ -2,7 +2,7 @@ import { fetchIntoResult } from "$lib/utils";
 import type { ProjectJSON } from "./models";
 import { parseProjectJSON, processProjectJson } from "./service";
 
-export const projectService = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
+export const projectClient = (fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) => {
     return {
         get: async () => {
             const response = await fetchIntoResult<ProjectJSON[]>(() => fetch("/api/projects", { method: "GET" }));
