@@ -27,6 +27,19 @@ export const proposalsClient = (fetch: (input: RequestInfo | URL, init?: Request
                 body: JSON.stringify(payload)
             }));
             return response;
+        },
+        createProposal: async (taskId: number) => {
+            const payload = {
+                task_id: taskId
+            };
+            const response = await fetchIntoResult(() => fetch('/api/proposals', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }));
+            return response
         }
     }
 }

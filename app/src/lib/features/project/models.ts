@@ -1,3 +1,5 @@
+import type { TaskClass } from "$lib/components/task/states.svelte";
+import type { ValidationErrors } from "$lib/object-validator";
 import type { TaskGET, TaskJSON, TaskPOST } from "../task/models";
 
 export interface ProjectJSON {
@@ -46,4 +48,9 @@ export interface ProjectForm {
     content: string;
     budget: number;
     deadline: string;
+}
+
+export interface ProjectFormValidation {
+    projectErrors: ValidationErrors<ProjectForm>;
+    tasksError: Map<TaskClass, ValidationErrors<TaskClass>>;
 }

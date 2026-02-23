@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { TaskClass } from '$lib/components/task/states.svelte';
-	import { validateObject, type ValidationErrors } from '$lib/object-validator';
-	import type { TaskPOST } from '$lib/features/task/models';
-	import { Validator } from '$lib/validator';
+	import { projectClient } from '$lib/features/project/client';
+	import type {
+		ProjectForm,
+		ProjectFormValidation,
+		ProjectGET
+	} from '$lib/features/project/models';
+	import { projectService } from '$lib/features/project/service';
 	import { Plus } from 'lucide-svelte';
 	import AsyncButton from '../../ui/button/AsyncButton.svelte';
-	import Skills from '../skills/Skills.svelte';
 	import RichTextEditor from '../../ui/texteditor/RichTextEditor.svelte';
-	import type { ProjectForm, ProjectGET, ProjectPOST } from '$lib/features/project/models';
+	import Skills from '../skills/Skills.svelte';
 
-	let {
-		projectIn
-	}: {
-		projectIn?: ProjectGET;
-	} = $props();
+	let { projectIn }: { projectIn?: ProjectGET } = $props();
 
 	let projectFormInput: ProjectForm = $derived.by(() => {
 		let projectState = $state({
@@ -30,139 +29,33 @@
 		tasks = projectIn?.tasks?.map((task) => TaskClass.fromGET(task)) ?? ([] as TaskClass[]);
 	});
 
-	let tasks: TaskClass[] = $state(
+	let tasks: TaskClass[] = $derived(
 		projectIn?.tasks?.map((task) => TaskClass.fromGET(task)) ?? ([] as TaskClass[])
 	);
+	let formValidation: ProjectFormValidation | undefined = $state(undefined);
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
-		formValidation = reportFormValidation(projectFormInput, tasks);
-		if (formValidation.hasErrors) {
+		const payloadOrFormErrors = projectService.constructPostPutPayload(projectFormInput, tasks);
+		if (payloadOrFormErrors.isErr()) {
+			formValidation = payloadOrFormErrors.error!;
 			return;
 		}
-		const projectPost: ProjectPOST = {
-			title: projectFormInput.title,
-			content: projectFormInput.content,
-			budget: parseFloat(projectFormInput.budget.toString()),
-			deadline: new Date(projectFormInput.deadline).toISOString()
-		};
-
-		const tasksPayload = tasks.map((task) => {
-			const attributes: TaskPOST = {
-				title: task.title,
-				content: task.content,
-				assignee_id: task.assignee_id,
-				skills: task.skills,
-				status: task.status,
-				budget: parseFloat(task.budget?.toString() ?? '0'),
-				deadline: new Date().toISOString()
-			};
-			return {
-				...attributes,
-				id: task.id
-			};
-		});
-
-		const payload = {
-			...projectPost,
-			tasks: tasksPayload
-		};
-
+		const payload = payloadOrFormErrors.unwrap();
 		if (projectIn?.id) {
-			const response = await fetch(`/api/projects/${projectIn.id}`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(payload)
-			});
-
-			if (response.status === 200) {
-				if (document.startViewTransition) {
-					document.startViewTransition(async () => {
-						return await invalidate(`/api/projects/${projectIn.id}`);
-					});
-				} else {
-					return await invalidate(`/api/projects/${projectIn.id}`);
-				}
+			const response = await projectClient(fetch).put(projectIn.id, payload);
+			if (response.isOk()) {
+				return await goto(`/projects/${projectIn.id}`, {
+					invalidate: [`/api/projects/${projectIn.id}`]
+				});
 			}
 		} else {
-			const response = await fetch('/api/projects', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(payload)
-			});
-
-			if (response.status === 201) {
+			const response = await projectClient(fetch).post(payload);
+			if (response.isOk()) {
 				return await goto('/');
 			}
 		}
 	}
-
-	async function deleteProject() {
-		if (projectIn?.id) {
-			const response = await fetch(`/api/projects/${projectIn.id}`, {
-				method: 'DELETE'
-			});
-			if (response.ok) {
-				if (document.startViewTransition) {
-					document.startViewTransition(async () => {
-						await invalidate('/api/projects');
-						return await goto('/');
-					});
-				} else {
-					await invalidate('/api/projects');
-					return await goto('/');
-				}
-			}
-		}
-	}
-
-	interface FormValidation {
-		projectErrors: ValidationErrors<ProjectForm>;
-		tasksError: Map<TaskClass, ValidationErrors<TaskClass>>;
-		hasErrors: boolean;
-	}
-
-	function reportFormValidation(project: ProjectForm, tasks: TaskClass[]): FormValidation {
-		const projectSchema = {
-			title: Validator.string('project title').required().nonEmpty().withMinSize(5).withMaxSize(20),
-			content: Validator.string('Project description')
-				.required()
-				.nonEmpty()
-				.withMinSize(10)
-				.withMaxSize(500),
-			budget: Validator.number('project budget').required().isPositive(),
-			deadline: Validator.string('project deadline').required().nonEmpty()
-		};
-		const taskSchema = {
-			title: Validator.string('task title').required().nonEmpty().withMinSize(5).withMaxSize(20),
-			content: Validator.string('task description')
-				.required()
-				.nonEmpty()
-				.withMinSize(10)
-				.withMaxSize(500),
-			budget: Validator.number('task budget').required().isPositive(),
-			deadline: Validator.string('task deadline').required().nonEmpty(),
-			skills: Validator.stringArray('skills').nonEmpty().maxSize(50)
-		};
-		const projectErrors = validateObject(project, projectSchema);
-		const tasksError = new Map(
-			tasks.map((task) => [task, validateObject(task.toTaskForm(), taskSchema)])
-		);
-		const hasProjectFormErrors = Object.values(projectErrors).some((errors) => errors.length > 0);
-		const hasTaskFormErrors = Array.from(tasksError.values())
-			.flatMap((errors) => Object.values(errors))
-			.some((value) => value.length > 0);
-		return {
-			projectErrors,
-			tasksError,
-			hasErrors: hasProjectFormErrors || hasTaskFormErrors
-		};
-	}
-	let formValidation: FormValidation | undefined = $state(undefined);
 </script>
 
 {#snippet deleteButton()}
@@ -191,13 +84,7 @@
 			<button
 				class="cancel-btn"
 				onclick={() => {
-					if (document.startViewTransition) {
-						document.startViewTransition(() => {
-							history.back();
-						});
-					} else {
-						history.back();
-					}
+					history.back();
 				}}>Cancel</button
 			>
 			{#if projectIn?.id}
@@ -207,7 +94,7 @@
 					--hover-color="hsl(0, 50%, 35%)"
 					idleView={deleteButton}
 					{endView}
-					onclick={() => deleteProject()}
+					onclick={() => projectService.deleteProject(projectIn.id!)}
 				/>
 			{/if}
 			<AsyncButton idleView={submitButton} {endView} onclick={(event) => handleSubmit(event)} />
@@ -338,11 +225,7 @@
 					</div>
 					<div>
 						<div class="input input-label">
-							<input
-								class="input-style"
-								placeholder=" "
-								bind:value={taskInstance.budget}
-							/>
+							<input class="input-style" placeholder=" " bind:value={taskInstance.budget} />
 							<label for="budget">Budget</label>
 						</div>
 						{#if formValidation}
