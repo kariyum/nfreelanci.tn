@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import EditProposal from '$lib/components/proposal/EditProposal.svelte';
 	import type { ProposalGET } from '$lib/features/proposals/models.js';
+	import { proposalsClient } from '$lib/features/proposals/client.js';
 
 	let { data } = $props();
 	let task = $derived(data.task);
@@ -27,17 +28,8 @@
 	});
 
 	async function submitApplication(taskId: number) {
-		const payload = {
-			task_id: taskId
-		};
-		const response = await fetch('/api/proposals', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(payload)
-		});
-		if (response.ok) {
+		const response = await proposalsClient(fetch).createProposal(taskId);
+		if (response.isOk()) {
 			await invalidate(`/api/projects/${page.params.id}`);
 		} else {
 			alert('Failed to submit proposal!');
@@ -50,26 +42,18 @@
 		proposalId: number,
 		action: string
 	) {
-		const payload = {
-			action
-		};
-		const response = await fetch(`/api/proposals/${proposalId}/status`, {
-			method: 'PATCH',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(payload)
-		});
-		if (response.ok) {
+		const response = await proposalsClient(fetch).patchProposalStatus(proposalId, action);
+		if (response.isOk()) {
 			await invalidate(`/api/projects/${projectId}/tasks/${taksId}/proposals`);
 			await invalidate(`/api/projects/${projectId}`);
 		} else {
-			// todo show error banner
+			alert('Failed to patch proposal status!');
 		}
 	}
 	let width = $state(30);
 	let left = $state(0);
-	async function updateFilter(element: HTMLElement, filter: string | undefined) {
+
+	function updateFilter(element: HTMLElement, filter: string | undefined) {
 		filterStatus = filter;
 		width = element.offsetWidth;
 		left = element.offsetLeft;

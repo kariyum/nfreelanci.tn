@@ -41,6 +41,7 @@ kanban-plugin: board
 
 ## p1
 
+- [ ] return project when post and reroute to project details page
 - [ ] sending email capabilities
 - [ ] forgot password
 - [ ] google login

@@ -12,13 +12,7 @@
 			projectIn={data.project.unwrap()}
 			user={data.user}
 			onEdit={async () => {
-				if (document.startViewTransition) {
-					document.startViewTransition(async () => {
-						await goto(`/projects/${page.params.id}/edit`);
-					});
-				} else {
-					await goto(`/projects/${page.params.id}/edit`);
-				}
+				await goto(`/projects/${page.params.id}/edit`);
 			}}
 		/>
 	</div>

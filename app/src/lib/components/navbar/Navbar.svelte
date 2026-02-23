@@ -428,6 +428,9 @@
 		.home {
 			position: relative;
 			color: inherit;
+			&:hover {
+				background-color: transparent;
+			}
 		}
 
 		section {
@@ -441,12 +444,14 @@
 			color: inherit;
 		}
 
-		li {
+		li > a {
+			display: block;
 			padding: 0.5rem;
 			border-radius: 5px;
 		}
 
-		li:hover {
+		a:hover,
+		button:hover {
 			background-color: var(--hover-color);
 		}
 
@@ -458,13 +463,10 @@
 			background-color: transparent;
 			border: none;
 			margin: 0;
-			padding: 0;
+			padding: 0.5rem;
+			border-radius: 5px;
 			font-weight: normal;
 			font-size: medium;
-
-			&:hover {
-				background-color: transparent;
-			}
 		}
 
 		.notifications {
