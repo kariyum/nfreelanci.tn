@@ -7,7 +7,7 @@ import type { FormValidation } from "../account/models";
 import { processTaskJson } from "../task/client";
 import type { TaskPOST } from "../task/models";
 import { projectClient } from "./client";
-import type { ProjectJSON, ProjectGET, ProjectForm, ProjectPOST, ProjectFormValidation } from "./models";
+import type { ProjectJSON, ProjectGET, ProjectFormType, ProjectPOST, ProjectFormValidation } from "./models";
 
 export function processProjectJson(json: ProjectJSON): ProjectGET {
     const project: ProjectGET = {
@@ -26,7 +26,7 @@ export function processProjectJson(json: ProjectJSON): ProjectGET {
 
 export const parseProjectJSON = (jsonData: ProjectJSON[]) => jsonData.map((json) => processProjectJson(json));
 
-function validateProjectPayload(project: ProjectForm, tasks: TaskClass[]): ProjectFormValidation | undefined {
+function validateProjectPayload(project: ProjectFormType, tasks: TaskClass[]): ProjectFormValidation | undefined {
     const projectSchema = {
         title: Validator.string('project title').required().nonEmpty().withMinSize(5).withMaxSize(20),
         content: Validator.string('Project description')
@@ -73,7 +73,7 @@ export const projectService = {
             }
         }
     },
-    constructPostPutPayload: (project: ProjectForm, tasks: TaskClass[]): Result<ProjectPOST, ProjectFormValidation> => {
+    constructPostPutPayload: (project: ProjectFormType, tasks: TaskClass[]): Result<ProjectPOST, ProjectFormValidation> => {
         const formValidation = validateProjectPayload(project, tasks);
         if (formValidation) {
             return Result.err(formValidation)

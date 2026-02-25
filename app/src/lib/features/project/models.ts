@@ -43,7 +43,7 @@ export interface TaskForm {
     skills?: string[];
 }
 
-export interface ProjectForm {
+export interface ProjectFormType {
     title: string;
     content: string;
     budget: number;
@@ -51,6 +51,6 @@ export interface ProjectForm {
 }
 
 export interface ProjectFormValidation {
-    projectErrors: ValidationErrors<ProjectForm>;
+    projectErrors: ValidationErrors<ProjectFormType>;
     tasksError: Map<TaskClass, ValidationErrors<TaskClass>>;
 }
