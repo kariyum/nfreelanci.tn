@@ -52,7 +52,8 @@
     --blue: light-dark(#abd9ff, #3e5e78);
     --grey: light-dark(#3d3d3d, #c2c2c2);
     --red: light-dark(rgb(212, 166, 166), rgb(121, 84, 84));
-    --vibrant-red: light-dark(hsl(0, 92%, 75%), hsl(0, 45%, 30%));
+    --vibrant-red: light-dark(hsl(4, 60%, 65%), hsl(0, 45%, 30%));
+    --vibrant-red-hover: light-dark(hsl(0, 73%, 65%), hsl(0, 50%, 35%));
     --blue-bg: light-dark(#e2eafb, #596380);
     --pink-bg: light-dark(#fbe2f4, #704e66);
     --violet-bg: light-dark(#e3dbfa, #645c80);
@@ -126,6 +127,7 @@ button {
 
     &:disabled {
         background-color: transparent;
+        cursor: not-allowed;
     }
 
     &:not(:disabled) {

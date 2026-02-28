@@ -117,7 +117,6 @@ export class StringValidator extends Validator<string, string> {
             if (s != null && s != undefined && s === other) {
                 return new Result<void, string>();
             } else {
-                console.log(s, other);
                 return new Result<void, string>(undefined, `${snakeToCapital(this.field)} is not equal to ${snakeToCapital(otherField)}`);
             }
         };
@@ -188,12 +187,10 @@ export class NumberValidator extends Validator<number, string> {
 
     validate(s: any): string[] {
         const regex = new RegExp('^[0-9]+$')
-        // console.log(regex.test(s.toString()));
         if (s != undefined && s != null && !regex.test(s.toString())) {
             return [`${this.field} must be a number`]
         }
         const value = (s != undefined && s != null) ? parseFloat(s) : s;
-        console.log(value);
         const results = this.validators.map((validator) => validator(value));
         const errors = results.map((error) => error.error).filter((error) => error != undefined);
         return errors;
@@ -214,7 +211,6 @@ export class StringArrayValidator extends Validator<string[], string> {
         const emptinessCheck: StringArrayValidatorType = (
             arr: string[] | undefined | null
         ): Result<void, string> => {
-            console.log("CHECKING ARRAY LENGTH", arr?.length)
             if (arr != null && arr != undefined && arr.length != 0) {
                 return new Result<void, string>();
             } else

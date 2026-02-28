@@ -107,6 +107,7 @@ export class WebSocketService {
 
         this.socket.onerror = (event: Event) => {
             console.error("Socket encountered an error", event);
+            WebSocketService.instance = new WebSocketService("/api/push_events");
         }
     }
 
