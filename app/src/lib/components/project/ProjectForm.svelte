@@ -8,26 +8,11 @@
 	import RichTextEditor from '$lib/ui/texteditor/RichTextEditor.svelte';
 
 	let {
-		projectIn = $bindable(),
+		projectFormInput = $bindable(),
 		formValidation
-	}: { projectIn?: ProjectGET; formValidation?: ProjectFormValidation } = $props();
-
-	let projectFormInput: ProjectFormType = $derived.by(() => {
-		let projectState = $state({
-			title: projectIn?.title ?? '',
-			content: projectIn?.content ?? '',
-			budget: projectIn?.budget ?? 0,
-			deadline: projectIn?.deadline.toLocaleDateString('en-CA') ?? ''
-		});
-		return projectState;
-	});
+	}: { projectFormInput: ProjectFormType; formValidation?: ProjectFormValidation } = $props();
 </script>
 
-{#if projectIn}
-	<h2>Update your project</h2>
-{:else}
-	<h2>Create a new project</h2>
-{/if}
 <div class="new-container">
 	<div class="left">
 		<div class="card card-padding">

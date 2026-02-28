@@ -1,16 +1,38 @@
 <script lang="ts">
+	import type { Result } from '$lib/utils';
 	import AsyncButton from './AsyncButton.svelte';
 
 	interface Props {
-		onClick: () => Promise<any>;
+		onclick: () => Promise<Result<any, any>>;
+		ondone?: () => Promise<any>;
+		disableOtherActions?: boolean;
 	}
 
-	async function handleDelete() {}
+	let {
+		onclick,
+		disableOtherActions = $bindable(),
+		ondone = () => Promise.resolve()
+	}: Props = $props();
+
+	async function handleDelete() {
+		return onclick();
+	}
 </script>
 
-<AsyncButton onclick={async () => await handleDelete()}>
+<AsyncButton
+	--color="var(--vibrant-red)"
+	--width="fit-content"
+	--hover-color="var(--vibrant-red-hover)"
+	onclick={async () => await handleDelete()}
+	{ondone}
+	bind:disableOtherActions
+>
 	{#snippet idleView()}
 		<div>Delete</div>
+	{/snippet}
+
+	{#snippet loading()}
+		<div>Deleting...</div>
 	{/snippet}
 
 	{#snippet endView()}

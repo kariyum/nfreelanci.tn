@@ -12,8 +12,10 @@
 	import AsyncButton from '../../ui/button/AsyncButton.svelte';
 	import TaskForm from '../task/TaskForm.svelte';
 	import ProjectForm from './ProjectForm.svelte';
+	import DeleteButton from '$lib/ui/button/DeleteButton.svelte';
 
 	let { projectIn }: { projectIn?: ProjectGET } = $props();
+	let projectId = $derived(projectIn?.id);
 
 	let projectFormInput: ProjectFormType = $derived.by(() => {
 		let projectState = $state({
@@ -29,56 +31,77 @@
 		projectIn?.tasks?.map((task) => TaskClass.fromGET(task)) ?? ([] as TaskClass[])
 	);
 	let formValidation: ProjectFormValidation | undefined = $state(undefined);
+	let commonDisabled: boolean = $state(false);
+
+	async function onDoneSubmit() {
+		if (projectId) {
+			return goto(`/projects/${projectId}`, {
+				invalidate: [`/api/projects/${projectId}`]
+			});
+		} else {
+			return goto('/');
+		}
+	}
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 		const payloadOrFormErrors = projectService.constructPostPutPayload(projectFormInput, tasks);
 		if (payloadOrFormErrors.isErr()) {
 			formValidation = payloadOrFormErrors.error!;
-			return;
+			return payloadOrFormErrors;
 		}
 		const payload = payloadOrFormErrors.unwrap();
-		if (projectIn?.id) {
-			const response = await projectClient(fetch).put(projectIn.id, payload);
-			if (response.isOk()) {
-				return await goto(`/projects/${projectIn.id}`, {
-					invalidate: [`/api/projects/${projectIn.id}`]
-				});
-			}
+		if (projectId) {
+			return projectClient(fetch).put(projectId, payload);
 		} else {
-			const response = await projectClient(fetch).post(payload);
-			if (response.isOk()) {
-				return await goto('/');
-			}
+			return projectClient(fetch).post(payload);
 		}
 	}
 </script>
 
-{#snippet deleteButton()}
-	<div>Delete Project</div>
-{/snippet}
-{#snippet submitButton()}
-	<div>{projectIn ? 'Update Project' : 'Save Project'}</div>
-{/snippet}
-{#snippet endView()}
-	Done!
+{#snippet projectForm()}
+	{#if projectIn}
+		<h2>Update your project</h2>
+	{:else}
+		<h2>Create a new project</h2>
+	{/if}
+	<ProjectForm bind:projectFormInput {formValidation}></ProjectForm>
 {/snippet}
 
 {#snippet actions()}
 	<div style="width: 100%; margin-top: 1rem;">
 		<div class="action-buttons">
-			<button class="cancel-btn" onclick={() => history.back()}>Cancel</button>
-			{#if projectIn?.id}
-				<AsyncButton
-					--color="var(--vibrant-red)"
-					--width="fit-content"
-					--hover-color="hsl(0, 50%, 35%)"
-					idleView={deleteButton}
-					{endView}
-					onclick={() => projectService.deleteProject(projectIn!.id!)}
-				/>
+			<button disabled={commonDisabled} class="cancel-btn" onclick={() => history.back()}
+				>Cancel</button
+			>
+			{#if projectId}
+				<DeleteButton
+					onclick={() => projectService.deleteProject(projectId)}
+					ondone={() => goto('/', { invalidate: ['/api/projects'] })}
+					bind:disableOtherActions={commonDisabled}
+				></DeleteButton>
 			{/if}
-			<AsyncButton idleView={submitButton} {endView} onclick={(event) => handleSubmit(event)} />
+			<AsyncButton
+				onclick={(event) => handleSubmit(event)}
+				ondone={() => onDoneSubmit()}
+				bind:disableOtherActions={commonDisabled}
+			>
+				{#snippet idleView()}
+					<div>{projectIn ? 'Update Project' : 'Save Project'}</div>
+				{/snippet}
+				{#snippet loading()}
+					<div>
+						{#if projectIn}
+							Updating...
+						{:else}
+							Creating...
+						{/if}
+					</div>
+				{/snippet}
+				{#snippet endView()}
+					Done!
+				{/snippet}
+			</AsyncButton>
 		</div>
 	</div>
 {/snippet}
@@ -109,7 +132,7 @@
 {/snippet}
 
 <div class="container">
-	<ProjectForm bind:projectIn {formValidation}></ProjectForm>
+	{@render projectForm()}
 	{@render createTask()}
 	{@render actions()}
 </div>

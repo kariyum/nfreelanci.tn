@@ -1,44 +1,88 @@
 <script lang="ts">
+	import type { Result } from '$lib/utils';
 	import type { Snippet } from 'svelte';
+	let {
+		onclick,
+		ondone = () => Promise.resolve(),
+		idleView,
+		endView,
+		loading,
+		disableOtherActions = $bindable(false)
+	}: Props = $props();
 
 	let waitingForResponse = $state(false);
 	let isLoading = $state(false);
-	let disabled = $derived(waitingForResponse);
+	let disabled = $derived(waitingForResponse || disableOtherActions);
 	let done = $state(false);
+	let responseSuccess = $state(true);
 
 	interface Props {
-		onclick: (event: MouseEvent) => Promise<any>;
+		onclick: (event: MouseEvent) => Promise<Result<any, any>>;
+		ondone?: () => Promise<any>;
 		idleView: Snippet;
+		loading?: Snippet;
 		endView: Snippet;
+		disableOtherActions?: boolean;
 	}
 
-	let { onclick, idleView, endView }: Props = $props();
+	$effect(() => {
+		disableOtherActions = waitingForResponse;
+	});
 
 	async function clickHandler(event: MouseEvent) {
 		waitingForResponse = true;
 		const spinnerTimeout = setTimeout(() => (isLoading = true), 200);
-		await onclick(event);
+		const response = await onclick(event);
+		responseSuccess = response.isOk();
+		if (isLoading) {
+			done = true;
+		}
+		isLoading = false;
 		clearTimeout(spinnerTimeout);
 		waitingForResponse = false;
-		done = true;
 		setTimeout(() => (done = false), 1000);
+		if (responseSuccess) {
+			await ondone();
+		}
 	}
 </script>
 
 <button {disabled} onclick={clickHandler}>
-	{#if isLoading}
-		<span class="loader"></span>
-	{:else if done}
-		{@render endView()}
-	{:else}
+	<div style:visibility={isLoading || done ? 'hidden' : 'visible'}>
 		{@render idleView()}
-	{/if}
+	</div>
+	<div class="stack" style:visibility={isLoading ? 'visible' : 'hidden'}>
+		{#if loading}
+			{@render loading()}
+		{:else}
+			<span class="loader"></span>
+		{/if}
+	</div>
+	<div class="stack" style:visibility={done ? 'visible' : 'hidden'}>
+		{#if responseSuccess}
+			{@render endView()}
+		{:else}
+			<div>Failed!</div>
+		{/if}
+	</div>
 </button>
 
 <style>
+	button:disabled {
+		cursor: not-allowed;
+		opacity: 0.9;
+	}
+	button:disabled:hover {
+		background-color: var(--color, var(--btn-bg));
+	}
 	button {
+		display: grid;
 		width: var(--width, max-content);
 		background-color: var(--color, var(--btn-bg));
+	}
+
+	button > div {
+		grid-area: 1 / 1;
 	}
 
 	button:hover {

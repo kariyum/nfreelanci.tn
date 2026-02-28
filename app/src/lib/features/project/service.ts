@@ -1,7 +1,7 @@
 import { goto } from "$app/navigation";
 import type { TaskClass } from "$lib/components/task/states.svelte";
 import { validateObject, type ValidationErrors } from "$lib/object-validator";
-import { Result } from "$lib/utils";
+import { fetchIntoResult, Result } from "$lib/utils";
 import { Validator } from "$lib/validator";
 import type { FormValidation } from "../account/models";
 import { processTaskJson } from "../task/client";
@@ -66,12 +66,7 @@ function validateProjectPayload(project: ProjectFormType, tasks: TaskClass[]): P
 
 export const projectService = {
     deleteProject: async (projectId: number) => {
-        if (projectId) {
-            const response = await projectClient(fetch).delete(projectId);
-            if (response.ok) {
-                return await goto('/', { invalidate: ['/api/projects'] });
-            }
-        }
+        return fetchIntoResult(() => projectClient(fetch).delete(projectId));
     },
     constructPostPutPayload: (project: ProjectFormType, tasks: TaskClass[]): Result<ProjectPOST, ProjectFormValidation> => {
         const formValidation = validateProjectPayload(project, tasks);
