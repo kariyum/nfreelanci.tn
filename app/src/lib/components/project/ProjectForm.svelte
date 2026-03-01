@@ -37,7 +37,7 @@
 			<h2>Project Constraints</h2>
 			<div>
 				<div class="input input-label">
-					<input id="budget" placeholder=" " bind:value={projectFormInput.budget} />
+					<input id="budget" type="number" placeholder=" " bind:value={projectFormInput.budget} />
 					<label for="">Budget</label>
 				</div>
 				<Errors errors={formValidation?.projectErrors.budget}></Errors>
