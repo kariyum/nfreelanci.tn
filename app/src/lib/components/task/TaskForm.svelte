@@ -51,7 +51,7 @@
 			</div>
 			<div>
 				<div class="input input-label">
-					<input class="input-style" placeholder=" " bind:value={taskInstance.budget} />
+					<input class="input-style" type="number" placeholder=" " bind:value={taskInstance.budget} />
 					<label for="budget">Budget</label>
 				</div>
 				<Errors errors={formValidation?.tasksError.get(taskInstance)?.budget}></Errors>
