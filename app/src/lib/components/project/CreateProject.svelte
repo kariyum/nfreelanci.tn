@@ -99,7 +99,13 @@
 					</div>
 				{/snippet}
 				{#snippet endView()}
-					Done!
+					<div>
+						{#if projectIn}
+							Updated!
+						{:else}
+							Created!
+						{/if}
+					</div>
 				{/snippet}
 			</AsyncButton>
 		</div>
