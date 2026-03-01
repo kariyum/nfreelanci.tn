@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { onNavigate } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import Navbar from '$lib/components/navbar/Navbar.svelte';
 	import NavbarNewUser from '$lib/components/navbar/NavbarNewUser.svelte';
+	import LinearProgressBar from '$lib/ui/progress/LinearProgressBar.svelte';
 	import './styles.css';
 	let { data, children } = $props();
 
@@ -16,6 +18,10 @@
 		});
 	});
 </script>
+
+{#if navigating.complete}
+	<LinearProgressBar></LinearProgressBar>
+{/if}
 
 <svelte:head>
 	<script>
