@@ -29,11 +29,17 @@
 		transform: translate(-50%, -50%);
 		padding: 1rem;
 		min-width: 20%;
+		width: var(--width, 30rem);
+		height: var(--height, 20rem);
 		border: 2px solid var(--border);
 		border-radius: 15px;
 		opacity: 1;
 		transition-behavior: allow-discrete;
 		background-color: var(--background-color);
+	}
+
+	@media( width < 600px) {
+
 	}
 
 	dialog[open] {

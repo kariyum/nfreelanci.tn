@@ -71,6 +71,7 @@
 	button:disabled {
 		cursor: not-allowed;
 		opacity: 0.9;
+		background-color: var(--color, var(--btn-bg));
 	}
 	button:disabled:hover {
 		background-color: var(--color, var(--btn-bg));
