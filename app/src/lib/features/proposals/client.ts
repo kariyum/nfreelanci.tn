@@ -40,6 +40,20 @@ export const proposalsClient = (fetch: (input: RequestInfo | URL, init?: Request
                 body: JSON.stringify(payload)
             }));
             return response
+        },
+        updateProposal: async (proposalId: number, content: string, budget: string) => {
+            const payload = {
+                content: content,
+                budget: parseFloat(budget)
+            };
+            const result = await fetchIntoResult(() => fetch(`/api/proposals/${proposalId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }));
+            return result;
         }
     }
 }

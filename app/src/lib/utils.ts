@@ -260,3 +260,9 @@ export const storage = (key: string, initValue: any) => {
 
   return store;
 }
+
+
+
+export const waitFor = async (duration: number) => new Promise((resolve, reject) => {
+  setTimeout(() => resolve(3), 2000);
+});

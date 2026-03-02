@@ -13,6 +13,10 @@
 
 <style>
 	div {
-		margin: 1.2rem 0rem;
+		height: 100%;
+	}
+	textarea {
+		height: unset;
+		height: 100%;
 	}
 </style>

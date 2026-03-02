@@ -61,54 +61,53 @@
 
 {#snippet projectForm()}
 	{#if projectIn}
-		<h2>Update your project</h2>
+		<h2 style="display: inline;">Update your project</h2>
 	{:else}
-		<h2>Create a new project</h2>
+		<h2 style="display: inline;">Create a new project</h2>
 	{/if}
+	{@render actions()}
 	<ProjectForm bind:projectFormInput {formValidation}></ProjectForm>
 {/snippet}
 
 {#snippet actions()}
-	<div style="width: 100%; margin-top: 1rem;">
-		<div class="action-buttons">
-			<button disabled={commonDisabled} class="cancel-btn" onclick={() => history.back()}
-				>Cancel</button
-			>
-			{#if projectId}
-				<DeleteButton
-					onclick={() => projectService.deleteProject(projectId)}
-					ondone={() => goto('/', { invalidate: ['/api/projects'] })}
-					bind:disableOtherActions={commonDisabled}
-				></DeleteButton>
-			{/if}
-			<AsyncButton
-				onclick={(event) => handleSubmit(event)}
-				ondone={() => onDoneSubmit()}
+	<div class="action-buttons">
+		<button disabled={commonDisabled} class="cancel-btn" onclick={() => history.back()}
+			>Cancel</button
+		>
+		{#if projectId}
+			<DeleteButton
+				onclick={() => projectService.deleteProject(projectId)}
+				ondone={() => goto('/', { invalidate: ['/api/projects'] })}
 				bind:disableOtherActions={commonDisabled}
-			>
-				{#snippet idleView()}
-					<div>{projectIn ? 'Update Project' : 'Save Project'}</div>
-				{/snippet}
-				{#snippet loading()}
-					<div>
-						{#if projectIn}
-							Updating...
-						{:else}
-							Creating...
-						{/if}
-					</div>
-				{/snippet}
-				{#snippet endView()}
-					<div>
-						{#if projectIn}
-							Updated!
-						{:else}
-							Created!
-						{/if}
-					</div>
-				{/snippet}
-			</AsyncButton>
-		</div>
+			></DeleteButton>
+		{/if}
+		<AsyncButton
+			onclick={(event) => handleSubmit(event)}
+			ondone={() => onDoneSubmit()}
+			bind:disableOtherActions={commonDisabled}
+		>
+			{#snippet idleView()}
+				<div>{projectIn ? 'Update Project' : 'Save Project'}</div>
+			{/snippet}
+			{#snippet loading()}
+				<div>
+					{#if projectIn}
+						Updating...
+					{:else}
+						Creating...
+					{/if}
+				</div>
+			{/snippet}
+			{#snippet endView()}
+				<div>
+					{#if projectIn}
+						Updated!
+					{:else}
+						Created!
+					{/if}
+				</div>
+			{/snippet}
+		</AsyncButton>
 	</div>
 {/snippet}
 
@@ -140,14 +139,13 @@
 <div class="container">
 	{@render projectForm()}
 	{@render createTask()}
-	{@render actions()}
 </div>
 
 <style>
 	.action-buttons {
-		display: flex;
+		display: inline-flex;
 		gap: 1rem;
-		margin-left: auto;
+		float: right;
 		width: max-content;
 	}
 
