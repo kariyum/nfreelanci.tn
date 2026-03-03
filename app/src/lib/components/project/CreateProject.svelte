@@ -61,11 +61,10 @@
 
 {#snippet projectForm()}
 	{#if projectIn}
-		<h2 style="display: inline;">Update your project</h2>
+		<h2>Update your project</h2>
 	{:else}
-		<h2 style="display: inline;">Create a new project</h2>
+		<h2>Create a new project</h2>
 	{/if}
-	{@render actions()}
 	<ProjectForm bind:projectFormInput {formValidation}></ProjectForm>
 {/snippet}
 
@@ -139,14 +138,16 @@
 <div class="container">
 	{@render projectForm()}
 	{@render createTask()}
+	{@render actions()}
 </div>
 
 <style>
 	.action-buttons {
-		display: inline-flex;
+		display: flex;
+		width: 100%;
+		justify-content: end;
 		gap: 1rem;
-		float: right;
-		width: max-content;
+		margin-top: 1rem;
 	}
 
 	.container {
