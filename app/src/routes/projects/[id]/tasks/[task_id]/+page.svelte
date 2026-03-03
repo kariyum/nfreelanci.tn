@@ -262,9 +262,9 @@
 										</div>
 										<div class="detail">
 											<span>Content</span>
-											<span>
+											<p style="white-space: pre-wrap;">
 												{task.proposal_content ?? 'Unspecified'}
-											</span>
+											</p>
 										</div>
 									</div>
 									{#if task.proposal_status == 'cancelled'}
