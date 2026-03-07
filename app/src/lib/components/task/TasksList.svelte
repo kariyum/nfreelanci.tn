@@ -111,9 +111,6 @@
 		justify-content: space-between;
 		gap: 0.5rem;
 		flex-wrap: wrap;
-		> span:first-child {
-			color: var(--sub-title);
-		}
 	}
 
 	.padding-no-buttom {
