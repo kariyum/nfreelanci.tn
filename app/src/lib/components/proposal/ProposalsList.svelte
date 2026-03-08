@@ -103,7 +103,7 @@
 
 {#snippet applications(proposals: ProposalGET[], task: TaskGET)}
 	<div class="applications">
-		<h2>Applications ({proposals?.length || 0})</h2>
+		<h2>Applications ( {proposals?.length || 0} )</h2>
 		<div
 			class="app-actions"
 			style:--top={'0px'}

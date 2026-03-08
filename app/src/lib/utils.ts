@@ -261,8 +261,22 @@ export const storage = (key: string, initValue: any) => {
   return store;
 }
 
-
-
 export const waitFor = async (duration: number) => new Promise((resolve, reject) => {
   setTimeout(() => resolve(3), 2000);
 });
+
+export function clickOutside(node: HTMLElement, callback: () => void) {
+  const handleClick = (event: PointerEvent) => {
+    if (node && !node.contains(event.target as Node)) {
+      callback();
+    }
+  };
+
+  document.addEventListener('click', handleClick);
+
+  return {
+    destroy() {
+      document.removeEventListener('click', handleClick);
+    }
+  };
+}

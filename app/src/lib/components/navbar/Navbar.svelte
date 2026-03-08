@@ -15,6 +15,7 @@
 		WebSocketService
 	} from '$lib/features/notification/socket';
 	import type { User } from '$lib/features/auth/client';
+	import { clickOutside } from '$lib/utils';
 
 	let { user, notifications }: { user: User; notifications: BaseNotification[] } = $props();
 	let webSocketService: WebSocketService;
@@ -133,23 +134,19 @@
 
 {#snippet menuMobile()}
 	<ul>
-		<div class="mobile">
-			<div class="title">
-				<li>
-					<div>Work Bridge</div>
-					<ThemeToggler />
-				</li>
-				<hr />
-			</div>
-		</div>
-		<div class="mobile">
+		<div class="title">
 			<li>
-				<a href="/"
-					><House />
-					<div>Home</div></a
-				>
+				<div>Work Bridge</div>
+				<ThemeToggler />
 			</li>
+			<hr />
 		</div>
+		<li>
+			<a href="/"
+				><House />
+				Home</a
+			>
+		</li>
 		{#if user.role === 'recruiter'}
 			<li>
 				<a href="/projects/create"
@@ -158,32 +155,18 @@
 				>
 			</li>
 		{/if}
-		<!-- <li>
-			<a href="/messages"
-				><MessageCircle />
-				<div>Discussions</div></a
+		<li>
+			<a href="/notifications"
+				><Bell />
+				<div>Notifications</div></a
 			>
-		</li> -->
-		<div class="mobile">
-			<li>
-				<a href="/notifications"
-					><Bell />
-					<div>Notifications</div></a
-				>
-			</li>
-		</div>
+		</li>
 		<li>
 			<a href="/settings"
 				><Settings />
 				<div>Settings</div></a
 			>
 		</li>
-		<!-- <li>
-			<a href="/feature-request"
-				><PackagePlus />
-				<div>Feature Requests</div></a
-			>
-		</li> -->
 		<li>
 			<button onclick={logout}
 				><LogOut />
@@ -198,9 +181,15 @@
 		{#if user.role === 'recruiter'}
 			<li><a href="/projects/create">Create a project</a></li>
 		{/if}
-		<!-- <li><a href="/messages">Discussions</a></li> -->
 		<li class="notifications desktop" bind:this={liNotification}>
-			<button> Notifications </button>
+			<button
+				onclick={() => {
+					left = liNotification.getBoundingClientRect().left;
+					notificationMenu.showPopover();
+				}}
+			>
+				Notifications
+			</button>
 			<dialog
 				class="notification-container"
 				bind:this={notificationMenu}
@@ -211,7 +200,6 @@
 			</dialog>
 		</li>
 		<li><a href="/settings/profile">Settings</a></li>
-		<!-- <li><a href="/feature-request">Feature Requests</a></li> -->
 		<li>
 			<button onclick={logout}> Logout </button>
 		</li>
@@ -242,7 +230,6 @@
 				{@render menuDesktop()}
 			</nav>
 		</div>
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<div class="mobile">
 			<dialog bind:this={menuDialog} onclick={() => mobileState.closeMenu()}>
 				{@render menuMobile()}

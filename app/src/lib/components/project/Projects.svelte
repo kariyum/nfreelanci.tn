@@ -3,40 +3,59 @@
 	import { page } from '$app/state';
 	import Project from '$lib/components/project/Project.svelte';
 	import type { ProjectGET } from '$lib/features/project/models';
-	import { untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
+	import { on } from 'svelte/events';
+	import { createSubscriber } from 'svelte/reactivity';
 	let { projects }: { projects: ProjectGET[] } = $props();
 
 	let searchQuery = $state(page.url.searchParams.get('q') || '');
 	let searchedQuery: string = $state(page.url.searchParams.get('q') || '');
 	let timeout: number | undefined = undefined;
+	let form: HTMLFormElement;
+	let inputElement: HTMLInputElement;
 
-	$effect(() => {
-		searchQuery;
-		searchedQuery;
-		if (searchedQuery != searchQuery) {
-			untrack(() => {
-				if (timeout === undefined) {
-					timeout = setTimeout(async () => {
-						searchedQuery = searchQuery;
-						const url = searchQuery.trim().length == 0 ? `/projects` : `/projects?q=${searchQuery}`;
-						await goto(url, { keepFocus: true, replaceState: true });
-						timeout = undefined;
-					}, 1000);
-				}
-			});
+	function search() {
+		if (timeout === undefined) {
+			timeout = setTimeout(async () => {
+				searchedQuery = searchQuery;
+				const url =
+					searchQuery.trim().length == 0
+						? `/projects`
+						: `/projects?q=${encodeURIComponent(searchQuery)}`;
+				form.requestSubmit();
+				timeout = undefined;
+			}, 1000);
+		}
+	}
+	function debouncedSubmit(node: HTMLInputElement, form: () => HTMLFormElement) {
+		const subscriber = createSubscriber((trigger) => on(node, 'change', trigger));
+		$effect(() => {
+			subscriber();
+			const timeout = setTimeout(() => {
+				form().requestSubmit();
+			}, 500);
+			return () => clearTimeout(timeout);
+		});
+	}
+	onMount(() => {
+		if (page.url.searchParams.has('q') && inputElement) {
+			inputElement.focus();
 		}
 	});
 </script>
 
 <div class="outer-container">
-	<input
-		autofocus={page.url.searchParams.get('q') ? true : false}
-		type="text"
-		name="search"
-		id="search"
-		placeholder="Type to search products and tasks..."
-		bind:value={searchQuery}
-	/>
+	<form bind:this={form} action="/projects" method="GET" data-sveltekit-keepfocus>
+		<input
+			bind:this={inputElement}
+			data-sveltekit-keepfocus
+			type="text"
+			name="q"
+			id="search"
+			value={page.url.searchParams.get('q')}
+			placeholder="Type to search products and tasks..."
+		/>
+	</form>
 	<h3 style="view-transition-name: header3;">Available Projects</h3>
 	<div>
 		{#if projects.length === 0}
