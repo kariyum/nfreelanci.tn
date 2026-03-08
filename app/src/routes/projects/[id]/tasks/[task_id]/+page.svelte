@@ -4,17 +4,19 @@
 	let { data } = $props();
 </script>
 
-<div class="page-padding container">
-	{#if data.task && data.user}
-		<TaskDetails
-			projectOwner={data.projectOwner}
-			proposals={data.proposals}
-			task={data.task}
-			user={data.user}
-		></TaskDetails>
-	{:else}
-		<div>Task Not Found !?</div>
-	{/if}
+<div class="page-padding">
+	<div class="container">
+		{#if data.task && data.user}
+			<TaskDetails
+				projectOwner={data.projectOwner}
+				proposals={data.proposals}
+				task={data.task}
+				user={data.user}
+			></TaskDetails>
+		{:else}
+			<div>Task Not Found !?</div>
+		{/if}
+	</div>
 </div>
 
 <style>

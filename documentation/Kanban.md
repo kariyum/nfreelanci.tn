@@ -41,6 +41,7 @@ kanban-plugin: board
 
 ## p1
 
+- [ ] refactor: use pattern input html instead
 - [ ] return project when post and reroute to project details page
 - [ ] sending email capabilities
 - [ ] forgot password
