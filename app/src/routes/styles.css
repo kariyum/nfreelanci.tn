@@ -60,7 +60,7 @@
     --beige-bg: light-dark(#f6e2d4, #806959);
     --green-bg: light-dark(rgb(184, 218, 184), rgb(84, 121, 84));
     --title: light-dark(hsl(0, 0%, 15%), hsl(0, 0%, 85%));
-    --sub-title: light-dark(hsl(0, 0%, 5%, 0.5), hsl(0, 0%, 95%, 0.5));
+    --sub-title: light-dark(hsl(0, 0%, 17%), hsl(0, 0%, 76%));
     --error-color: light-dark(rgb(187, 101, 101), rgb(187, 101, 101));
     --progress-bar-bg: light-dark(#3b82f6, hsl(121.55 28% 47%));
 }
