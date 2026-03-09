@@ -131,3 +131,70 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.edit-delete-btns {
+		display: flex;
+		justify-content: stretch;
+		border-width: 1px 0 0 0;
+		border-style: solid;
+		border-color: var(--border);
+
+		> button:first-child {
+			font-size: medium;
+			align-self: unset;
+			flex-grow: 1;
+			border-radius: 0;
+			border: none;
+		}
+
+		> button:last-child {
+			border: none;
+			align-self: unset;
+			border-radius: 0;
+		}
+	}
+	.application-status {
+		padding: 1rem;
+		padding-bottom: 0%;
+		width: 100%;
+		justify-content: space-between;
+		display: flex;
+		align-items: center;
+	}
+
+	.btn-submit {
+		margin: auto;
+		padding: 1rem 2rem;
+		font-size: medium;
+		width: 100%;
+		border-radius: 0 0 15px 15px;
+	}
+
+	.flex-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.details {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 1rem;
+		column-gap: 1rem;
+	}
+	.detail {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+
+		> span:first-child {
+			color: var(--sub-title);
+		}
+	}
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+</style>

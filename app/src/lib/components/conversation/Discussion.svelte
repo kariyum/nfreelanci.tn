@@ -1,33 +1,29 @@
 <script lang="ts">
 	import Conversation from '$lib/components/conversation/Conversation.svelte';
 	import { type User } from '$lib/features/auth/client';
+	import type { Messages } from '$lib/features/messages/client';
 	import type { MessagesJsonResponse } from '$lib/features/notification/socket';
 	import { type ProposalGET } from '$lib/features/proposals/models.js';
 	import { type TaskGET } from '$lib/features/task/models';
 	interface Props {
 		task: TaskGET;
 		proposal: ProposalGET;
-		receivers: string[];
-		discussionId: number;
-		messages: MessagesJsonResponse[];
+		messages: Messages;
 		user: User;
 	}
-	let { task, proposal, receivers, discussionId, messages, user }: Props = $props();
+	let { task, proposal, messages, user }: Props = $props();
+	let receivers = $derived(messages.members.filter((member) => member != user.email).join(', '));
 </script>
 
-{#if task && proposal && user}
-	<div class="with-context page-padding">
-		{@render conversationWithContext(task, proposal, user)}
-	</div>
-	<div class="p-1 flex-row justify-between align-center without-context">
-		<div style="font-size: medium;">Conversation with {proposal.user_id}</div>
-	</div>
-	<div class="without-context chat">
-		<Conversation {discussionId} {receivers} remoteMessages={messages} {user} />
-	</div>
-{:else}
-	<div>404 NOT FOUND!</div>
-{/if}
+<div class="with-context page-padding">
+	{@render conversationWithContext(task, proposal, user)}
+</div>
+<div class="p-1 flex-row justify-between align-center without-context">
+	<div style="font-size: medium;">Conversation with {receivers}</div>
+</div>
+<div class="without-context chat">
+	<Conversation messagesProp={messages} {user} />
+</div>
 
 {#snippet conversationWithContext(task: TaskGET, proposal: ProposalGET, user: User)}
 	<div style="gap:1rem; margin-top: 1rem;" class="body page-width">
@@ -35,14 +31,14 @@
 			<div style="height: 100%; display: flex; flex-direction: column;">
 				<div class="p-1 flex-row justify-between align-center">
 					<div>
-						<div style="font-size: medium;">Conversation with {proposal.user_id}</div>
+						<div style="font-size: medium;">Conversation with {receivers}</div>
 						<div>Online</div>
 					</div>
 					<div>
 						<a href={`/projects/${task.project_id}/tasks/${task.id}`}>Back to Task Details</a>
 					</div>
 				</div>
-				<Conversation {discussionId} {receivers} remoteMessages={messages} {user} />
+				<Conversation messagesProp={messages} {user} />
 			</div>
 		</div>
 		<div class="right">

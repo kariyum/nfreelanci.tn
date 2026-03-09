@@ -7,18 +7,13 @@
 	import type { ClientMessage } from '$lib/types.js';
 	import type { User } from '$lib/features/auth/client';
 	import { WebSocketService, type MessagesJsonResponse } from '$lib/features/notification/socket';
+	import type { Messages } from '$lib/features/messages/client';
 
-	const {
-		receivers,
-		discussionId,
-		user,
-		remoteMessages
-	}: {
-		receivers: string[];
-		discussionId: number;
+	interface Props {
+		messagesProp: Messages;
 		user: User;
-		remoteMessages: MessagesJsonResponse[];
-	} = $props();
+	}
+	const { messagesProp, user }: Props = $props();
 
 	let webSocketService: WebSocketService;
 	let unsubscribe: () => void;
@@ -27,14 +22,11 @@
 	let justSwitched: boolean = true;
 	let viewport: HTMLDivElement;
 	let messageInputBox: HTMLInputElement;
-	// let receivers: string[] = $derived.by(() => {
-	// 	discussion_id;
-	// 	discussions;
-	// 	const maybeDiscussion = discussions?.find(
-	// 		(discussion) => discussion.id.toString() == discussion_id
-	// 	);
-	// 	return maybeDiscussion?.user_ids.filter((user_id) => user_id != user.email) ?? [];
-	// });
+	let receivers: string[] = $derived.by(() => {
+		return messagesProp.members.filter((member) => member != user.email);
+	});
+	let discussionId = $derived(messagesProp.discussion_id);
+	let remoteMessages = $derived(messagesProp.messages);
 
 	let localMessages: Array<MessagesJsonResponse> = $derived.by(() => {
 		remoteMessages;

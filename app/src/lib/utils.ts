@@ -159,6 +159,22 @@ export class Result<T, E> {
       throw t.error;
     }
   }
+
+  static combine<T extends Record<string, Result<any, E>>, E>(
+    obj: T
+  ): Result<{ [K in keyof T]: T[K] extends Result<infer V, E> ? V : never }, E> {
+    const result: any = {};
+
+    for (const key in obj) {
+      const item = obj[key];
+      if (item.isErr()) {
+        return Result.err<any, E>(item.error!);
+      }
+      result[key] = item.value;
+    }
+
+    return Result.ok(result);
+  }
 }
 
 export class Ok<T, E> extends Result<T, E> {
