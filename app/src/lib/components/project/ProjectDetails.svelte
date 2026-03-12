@@ -33,9 +33,7 @@
 					{/if}
 				</div>
 				<h2>Tasks ({projectIn.tasks?.length || 0})</h2>
-				<div>
-					<Tasks tasks={projectIn.tasks ?? []}></Tasks>
-				</div>
+				<Tasks tasks={projectIn.tasks ?? []}></Tasks>
 			</div>
 			<div class="column" style="flex-grow: 1;">
 				<div class="card card-padding">
