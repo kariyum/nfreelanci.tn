@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { Settings, User } from 'lucide-svelte';
 
@@ -12,16 +13,16 @@
 
 <div class="outer-container">
 	<div style="view-transition-name: no-transition;">
-		<a href="/settings" style="padding: 0"><h1>Settings</h1></a>
+		<a href={resolve('/settings')} style="padding: 0"><h1>Settings</h1></a>
 		<p style="color:var(--sub-title)">Manage your account settings and preferences.</p>
 	</div>
 	<div class="container">
 		<div class="menu" data-selected={pageToHeader.get(onPage) != undefined}>
-			<a class="link" href="/settings/profile" data-selected={onPage === 'profile'}>
+			<a class="link" href={resolve('/settings/profile')} data-selected={onPage === 'profile'}>
 				<User />
 				<div>Public Profile</div>
 			</a>
-			<a class="link" href="/settings/account" data-selected={onPage === 'account'}>
+			<a class="link" href={resolve('/settings/account')} data-selected={onPage === 'account'}>
 				<Settings /> Security & Login
 			</a>
 		</div>

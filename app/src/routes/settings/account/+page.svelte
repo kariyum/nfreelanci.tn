@@ -3,6 +3,7 @@
 	import type { PasswordUpdate } from '$lib/features/account/models.js';
 	import type { ValidationErrors } from '$lib/object-validator.js';
 	import Input from '$lib/ui/input/Input.svelte';
+	import { ClientError } from '$lib/utils.js';
 
 	let { data } = $props();
 	let formElement: HTMLFormElement;
@@ -26,19 +27,18 @@
 					status: 200
 				};
 				formElement.reset();
-			} else if (response.error?.clientError) {
+			} else if (response.error instanceof ClientError) {
 				infoMessage = {
 					message: 'Verify current password',
-					status: response.error.clientError.status
+					status: response.error.status
 				};
 			} else {
-				console.error(response.error);
 				infoMessage = {
 					message: `Error: Request failed`,
 					status: 0
 				};
 			}
-		} 
+		}
 		formErrors = payload.error;
 	}
 </script>
@@ -46,7 +46,7 @@
 <div>
 	<h2>Change Your Password</h2>
 	<form bind:this={formElement} onsubmit={submit}>
-		<input type="email" hidden value={data.user?.email} />
+		<input type="email" hidden value={data.user.email} />
 		<Input errors={formErrors?.currentPassword} type="password" label="Current Password"></Input>
 		<Input errors={formErrors?.newPassword} type="password" label="New Password"></Input>
 		<Input errors={formErrors?.confirmPassword} type="password" label="Confirm Password"></Input>

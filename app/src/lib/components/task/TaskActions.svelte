@@ -1,5 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { SquarePen } from 'lucide-svelte';
 </script>
@@ -11,7 +12,7 @@
 			<button
 				class="row"
 				onclick={async () => {
-					await goto(`/projects/${page.params.id}/edit`);
+					await goto(resolve(`/projects/${page.params.id}/edit`));
 				}}
 			>
 				<div class="icon">

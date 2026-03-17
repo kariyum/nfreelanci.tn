@@ -32,12 +32,12 @@
 	</script>
 </svelte:head>
 
-{#if data.user && data.notifications.isOk()}
-	<Navbar user={data.user} notifications={data.notifications.unwrap()} />
+{#if data.user.isOk() && data.notifications.isOk()}
+	<Navbar user={data.user.unwrap()} notifications={data.notifications.unwrap()} />
 	<div class="container">
 		{@render children()}
 	</div>
-{:else if data.user && data.notifications.isErr()}
+{:else if data.user.isOk() && data.notifications.isErr()}
 	<div>Oupsie... failed to fetch notifications. Refresh the page please!</div>
 {:else}
 	<div class="container">

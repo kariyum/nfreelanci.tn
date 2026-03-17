@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { ChevronRight } from 'lucide-svelte';
 
@@ -10,10 +11,10 @@
 		<div style="margin: 1rem;">
 			<div class="links">
 				<div class="link">
-					<a href="/">Projects</a>
+					<a href={resolve('/')}>Projects</a>
 					<ChevronRight size="16" />
 					{#if page.params.task_id}
-						<a href="/projects/{page.params.id}">{page.params.id}</a>
+						<a href={resolve(`/projects/${page.params.id}`)}>{page.params.id}</a>
 					{:else}
 						<div>{page.params.id}</div>
 					{/if}
@@ -21,9 +22,9 @@
 				{#if page.params.task_id}
 					<div class="link">
 						<ChevronRight size="16" />
-						<a href="/projects/{page.params.id}">Tasks</a>
+						<a href={resolve(`/projects/${page.params.id}`)}>Tasks</a>
 						<ChevronRight size="16" />
-						<a href="/projects/{page.params.id}/tasks/{page.params.task_id}"
+						<a href={resolve(`/projects/${page.params.id}/tasks/${page.params.task_id}`)}
 							>{page.params.task_id}</a
 						>
 					</div>
