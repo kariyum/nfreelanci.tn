@@ -13,6 +13,7 @@
 	import TaskForm from '../task/TaskForm.svelte';
 	import ProjectForm from './ProjectForm.svelte';
 	import DeleteButton from '$lib/ui/button/DeleteButton.svelte';
+	import { resolve } from '$app/paths';
 
 	let { projectIn }: { projectIn?: ProjectGET } = $props();
 	let projectId = $derived(projectIn?.id);
@@ -33,13 +34,13 @@
 	let formValidation: ProjectFormValidation | undefined = $state(undefined);
 	let commonDisabled: boolean = $state(false);
 
-	async function onDoneSubmit() {
+	async function onDoneSubmit(): Promise<void> {
 		if (projectId) {
-			return goto(`/projects/${projectId}`, {
+			return await goto(resolve(`/projects/${projectId}`), {
 				invalidate: [`/api/projects/${projectId}`]
 			});
 		} else {
-			return goto('/');
+			return await goto(resolve('/'));
 		}
 	}
 
@@ -52,9 +53,9 @@
 		}
 		const payload = payloadOrFormErrors.unwrap();
 		if (projectId) {
-			return projectClient(fetch).put(projectId, payload);
+			return (await projectClient(fetch).put(projectId, payload)).toResult();
 		} else {
-			return projectClient(fetch).post(payload);
+			return (await projectClient(fetch).post(payload)).toResult();
 		}
 	}
 </script>
@@ -76,7 +77,7 @@
 		{#if projectId}
 			<DeleteButton
 				onclick={() => projectService.deleteProject(projectId)}
-				ondone={() => goto('/', { invalidate: ['/api/projects'] })}
+				ondone={() => goto(resolve('/'), { invalidate: ['/api/projects'] })}
 				bind:disableOtherActions={commonDisabled}
 			></DeleteButton>
 		{/if}
@@ -126,7 +127,7 @@
 	{#if tasks.length == 0}
 		<div>No tasks were added to this project yet</div>
 	{/if}
-	{#each tasks as taskInstance, i}
+	{#each tasks as taskInstance, i (taskInstance)}
 		<TaskForm
 			{formValidation}
 			bind:taskInstance={tasks[i]}

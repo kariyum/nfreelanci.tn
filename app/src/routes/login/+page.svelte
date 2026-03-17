@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import AlreadyLoggedIn from '$lib/pages/AlreadyLoggedIn.svelte';
-	import { cyrb53, validateEmail } from '$lib/utils.js';
+	import { cyrb53 } from '$lib/utils.js';
 	import { MoveLeft } from 'lucide-svelte';
 	let { data } = $props();
 
@@ -43,7 +44,7 @@
 	}
 </script>
 
-{#if data.user}
+{#if data.user.isOk()}
 	<AlreadyLoggedIn />
 {:else}
 	<div class="container">

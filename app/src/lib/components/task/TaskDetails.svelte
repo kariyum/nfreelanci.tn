@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { User } from '$lib/features/auth/client';
+	import type { ProjectGET } from '$lib/features/project/models';
 	import type { ProposalGET } from '$lib/features/proposals/models';
 	import type { TaskGET } from '$lib/features/task/models';
 	import { snakeToCapital } from '$lib/utils';
@@ -9,13 +10,14 @@
 	import TaskContent from './TaskContent.svelte';
 
 	interface Props {
+		project: ProjectGET;
 		task: TaskGET;
 		proposals: ProposalGET[];
 		user: User;
-		projectOwner: String;
 	}
 
-	let { task, proposals, user, projectOwner }: Props = $props();
+	let { task, proposals, user, project }: Props = $props();
+	let projectOwner: string = $derived(project.user_id);
 	let isTaskOwner: boolean = $derived(projectOwner === user.email || false);
 </script>
 

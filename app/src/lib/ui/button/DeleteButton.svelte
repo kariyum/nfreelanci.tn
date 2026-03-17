@@ -3,8 +3,8 @@
 	import AsyncButton from './AsyncButton.svelte';
 
 	interface Props {
-		onclick: () => Promise<Result<any, any>>;
-		ondone?: () => Promise<any>;
+		onclick: () => Promise<Result<unknown, unknown>>;
+		ondone?: () => Promise<unknown>;
 		disableOtherActions?: boolean;
 	}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Result } from '$lib/utils';
+	import { Result } from '$lib/utils';
 	import type { Snippet } from 'svelte';
 	let {
 		onclick,
@@ -17,8 +17,8 @@
 	let responseSuccess = $state(true);
 
 	interface Props {
-		onclick: (event: MouseEvent) => Promise<Result<any, any>>;
-		ondone?: () => Promise<any>;
+		onclick: (event: MouseEvent) => Promise<Result<unknown, unknown>>;
+		ondone?: () => Promise<unknown>;
 		idleView: Snippet;
 		loading?: Snippet;
 		endView: Snippet;
