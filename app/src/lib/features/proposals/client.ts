@@ -1,4 +1,7 @@
-import { fetchIntoResult } from '$lib/utils';
+import { browser } from '$app/environment';
+import { page } from '$app/state';
+import type { Fetch } from '$lib/types';
+import { FetchErr, fetchIntoResult, UnauthorizedError } from '$lib/utils';
 import type { ProposalGET, ProposalJSON } from './models';
 
 function processProposalJSON(json: ProposalJSON) {
@@ -9,9 +12,7 @@ function processProposalJSON(json: ProposalJSON) {
 	return result;
 }
 
-export const proposalsClient = (
-	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
-) => {
+export const proposalsClient = (fetch: Fetch) => {
 	return {
 		getByProductIdTaskId: async (productId: string, taskId: string) => {
 			const proposalsResult = await fetchIntoResult<ProposalJSON[]>(() =>
