@@ -1,7 +1,5 @@
-import { browser } from '$app/environment';
-import { page } from '$app/state';
 import type { Fetch } from '$lib/types';
-import { FetchErr, fetchIntoResult, UnauthorizedError } from '$lib/utils';
+import { fetchIntoResult } from '$lib/utils';
 import type { ProposalGET, ProposalJSON } from './models';
 
 function processProposalJSON(json: ProposalJSON) {
