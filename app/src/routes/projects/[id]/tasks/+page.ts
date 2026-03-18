@@ -6,5 +6,8 @@ export const load: PageLoad = async ({ parent }) => {
 	if (parentData.user.isErr()) {
 		error(parentData.user.error.status, { message: parentData.user.error.message });
 	}
-	return { user: parentData.user.value };
+
+	return {
+		user: parentData.user.value
+	};
 };

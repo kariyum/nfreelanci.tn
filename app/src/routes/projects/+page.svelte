@@ -3,13 +3,9 @@
 	let { data } = $props();
 </script>
 
-{#if data.projects.isOk()}
-	<div class="container">
-		<Projects projects={data.projects.unwrap()}></Projects>
-	</div>
-{:else}
-	<div>Oupsie... failed to serve your request.</div>
-{/if}
+<div class="container">
+	<Projects projects={data.projects}></Projects>
+</div>
 
 <style>
 	.container {

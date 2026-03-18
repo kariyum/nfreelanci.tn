@@ -27,16 +27,18 @@
 					status: 200
 				};
 				formElement.reset();
-			} else if (response.error instanceof ClientError) {
-				infoMessage = {
-					message: 'Verify current password',
-					status: response.error.status
-				};
 			} else {
-				infoMessage = {
-					message: `Error: Request failed`,
-					status: 0
-				};
+				if (response.error instanceof ClientError) {
+					infoMessage = {
+						message: 'Verify current password',
+						status: response.error.status
+					};
+				} else {
+					infoMessage = {
+						message: `Error: Request failed`,
+						status: 0
+					};
+				}
 			}
 		}
 		formErrors = payload.error;

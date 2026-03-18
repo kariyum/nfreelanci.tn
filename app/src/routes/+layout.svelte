@@ -33,7 +33,7 @@
 </svelte:head>
 
 {#if data.user.isOk() && data.notifications.isOk()}
-	<Navbar user={data.user.unwrap()} notifications={data.notifications.unwrap()} />
+	<Navbar user={data.user.value} notifications={data.notifications.value} />
 	<div class="container">
 		{@render children()}
 	</div>

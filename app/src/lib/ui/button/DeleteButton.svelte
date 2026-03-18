@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Result } from '$lib/utils';
+	import type { FetchErr, FetchOk } from '$lib/utils';
 	import AsyncButton from './AsyncButton.svelte';
 
 	interface Props {
-		onclick: () => Promise<Result<unknown, unknown>>;
+		onclick: () => Promise<FetchOk<unknown> | FetchErr>;
 		ondone?: () => Promise<unknown>;
 		disableOtherActions?: boolean;
 	}
@@ -23,7 +23,7 @@
 	--color="var(--vibrant-red)"
 	--width="fit-content"
 	--hover-color="var(--vibrant-red-hover)"
-	onclick={async () => await handleDelete()}
+	onclick={async () => (await handleDelete()).toResult()}
 	{ondone}
 	bind:disableOtherActions
 >

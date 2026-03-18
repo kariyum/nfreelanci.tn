@@ -28,7 +28,7 @@
 			await login(email, cyrb53(password).toString()).then(
 				async (response) => {
 					if (response.ok) {
-						await goto(data.redirectionUrl, { invalidateAll: true });
+						await goto(resolve(data.redirectionUrl), { invalidateAll: true });
 					} else if (response.status == 401) {
 						final_error_message = 'Wrong combination';
 					} else {
@@ -49,7 +49,7 @@
 {:else}
 	<div class="container">
 		<div class="sub-container">
-			<a href="/">
+			<a href={resolve('/')}>
 				<MoveLeft size="3rem" />
 			</a>
 			<h1>Welcome back !</h1>
@@ -71,7 +71,7 @@
 				{/if}
 				<button type="submit" onclick={handleSubmit}>Login</button>
 			</form>
-			<a href="/register">Don't have an account? Register!</a>
+			<a href={resolve('/register')}>Don't have an account? Register!</a>
 		</div>
 	</div>
 {/if}

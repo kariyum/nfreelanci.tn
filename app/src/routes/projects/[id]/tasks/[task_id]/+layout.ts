@@ -6,6 +6,10 @@ export async function load({ fetch, params, parent }) {
 	const parentData = await parent();
 	const task = parentData.project.tasks?.find((task) => task.id.toString() === params.task_id);
 
+	if (parentData.user.isErr()) {
+		error(parentData.user.error.status, { message: parentData.user.error.message });
+	}
+
 	if (task === undefined) {
 		error(404, { message: 'Task not found!' });
 	}
@@ -15,7 +19,8 @@ export async function load({ fetch, params, parent }) {
 	}
 
 	return {
-		proposals: proposals.unwrap(),
-		task: task
+		proposals: proposals.value,
+		task: task,
+		user: parentData.user.value
 	};
 }
