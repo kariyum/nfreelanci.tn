@@ -1,14 +1,10 @@
 import { profileClient } from '$lib/features/profiles/client.js';
-import { UnauthorizedError } from '$lib/utils.js';
+import { raiseIfUnauthorized } from '$lib/utils.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ fetch, parent }) {
 	const parentData = await parent();
-	if (parentData.user.error instanceof UnauthorizedError) {
-		error(401, {
-			message: 'Unauthorized, please login.'
-		});
-	}
+	const user = raiseIfUnauthorized(parentData.user);
 	const userProfile = await profileClient(fetch).get();
 	if (userProfile.isErr()) {
 		error(userProfile.error.status, {
@@ -16,7 +12,7 @@ export async function load({ fetch, parent }) {
 		});
 	}
 	return {
-		profileData: userProfile.unwrap(),
-		user: parentData.user.unwrap()
+		profileData: userProfile.value,
+		user
 	};
 }
