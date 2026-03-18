@@ -30,6 +30,8 @@
 				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 		);
 	</script>
+
+	<title>nfreelanci</title>
 </svelte:head>
 
 {#if data.user.isOk() && data.notifications.isOk()}
