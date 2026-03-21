@@ -1,14 +1,20 @@
 import { fetchIntoResult } from '$lib/utils';
 
-type UserJson = {
+export type UserJson = {
 	sub: string;
-	role: string;
+	email: string;
+	role: string | null;
+	name: string;
+	last_name: string;
 };
 
-export interface User {
+export type User = {
+	sub: string;
 	email: string;
 	role: 'freelancer' | 'recruiter';
-}
+	name: string;
+	last_name: string;
+};
 
 export const authClient = (
 	fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
@@ -16,13 +22,7 @@ export const authClient = (
 	return {
 		get: async () => {
 			const claimsResponse = await fetchIntoResult<UserJson>(() => fetch('/api/auth/whoami'));
-			const parsedResponse = claimsResponse.map((userJson) => {
-				return {
-					email: userJson.sub,
-					role: userJson.role
-				} as User;
-			});
-			return parsedResponse;
+			return claimsResponse;
 		}
 	};
 };

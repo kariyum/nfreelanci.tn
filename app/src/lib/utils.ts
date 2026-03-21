@@ -272,7 +272,12 @@ async function responseToFetchResult<T>(response: Response): Promise<FetchOk<T> 
 	} else if (response.status === 404) {
 		return new FetchErr(new NotFound('Not found'));
 	} else if (400 <= response.status && response.status < 500) {
-		return new FetchErr(new ClientError(response.status, 'Client error'));
+		return new FetchErr(
+			new ClientError(
+				response.status,
+				responseData.isOk() ? (responseData.value as string) : 'Client Error'
+			)
+		);
 	} else if (500 <= response.status) {
 		return new FetchErr(new ServerError(response.status, 'Server error'));
 	} else if (!response.ok) {

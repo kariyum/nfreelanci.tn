@@ -1,32 +1,25 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { ClientError, cyrb53, fetchIntoResult } from '$lib/utils.js';
+	import type { UserJson } from '$lib/features/auth/client';
+	import { cyrb53, fetchIntoResult } from '$lib/utils.js';
 	import { StringValidator, Validator } from '$lib/validator';
 	import { MoveLeft } from 'lucide-svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 
+	let { userProviderData }: { userProviderData: UserJson } = $props();
+
 	let formElement: HTMLFormElement;
 	const steps = [rolePicker, userInfoForm];
 	let currentStep = $state(0);
-	let formError: undefined | string = $state(undefined);
-	let allData: SvelteMap<string, string> = new SvelteMap();
+	let allData: SvelteMap<string, string> = $derived.by(() => {
+		return new SvelteMap();
+	});
 
-	const validators = (data: Map<string, string>) => {
-		return {
-			role: Validator.string('Role').required().in(['freelancer', 'recruiter']),
-			first_name: Validator.string('first name')
-				.required()
-				.nonEmpty()
-				.withMinSize(2)
-				.withMaxSize(20),
-			last_name: Validator.string('last name').required().nonEmpty().withMinSize(2).withMaxSize(20),
-			email: Validator.string('email').required().nonEmpty().email().withMaxSize(50),
-			password: Validator.string('password').required().nonEmpty().withMinSize(8),
-			confirm_password: Validator.string('confirm_password')
-				.required()
-				.equal(data.get('password')?.toString() ?? '', 'password')
-		};
+	const validators = {
+		role: Validator.string('Role').required().in(['freelancer', 'recruiter']),
+		first_name: Validator.string('first name').required().nonEmpty().withMinSize(2).withMaxSize(20),
+		last_name: Validator.string('last name').required().nonEmpty().withMinSize(2).withMaxSize(20)
 	};
 	interface FormValidation {
 		formErrors: Map<string, string[]>;
@@ -37,10 +30,10 @@
 
 	function reportFormValidation(
 		formData: Map<string, string>,
-		validators: (data: Map<string, string>) => { [key: string]: StringValidator }
+		validators: { [key: string]: StringValidator }
 	): FormValidation {
 		const formErrors: Map<string, string[]> = new Map();
-		Object.entries(validators(formData)).forEach(([field_name, validator]) => {
+		Object.entries(validators).forEach(([field_name, validator]) => {
 			const errors = validator
 				.validate(formData.get(field_name)?.toString())
 				.map((error) => error.toString());
@@ -61,32 +54,19 @@
 	}
 	let formValidation: FormValidation | undefined = $state(undefined);
 
-	function processFormData() {
-		const hashedPassword = cyrb53(allData.get('password') ?? '').toString();
-		allData.set('password', hashedPassword);
-		allData.delete('confirm_password');
-	}
-
 	async function sendRequest() {
-		processFormData();
 		const payload = new URLSearchParams(Array.from(allData));
-		const response = await fetchIntoResult(() =>
-			fetch('/api/auth/register', {
-				method: 'POST',
-				body: payload
-			})
-		);
+		const response = await fetch('/api/auth/register', {
+			method: 'POST',
+			body: payload
+		});
 
-		if (response.isOk()) {
-			await goto(resolve('/'), { invalidateAll: true });
-		}
-		if (response.isErr() && response.error instanceof ClientError && response.error.status == 409) {
-			formError = response.error.message;
+		if (response.ok) {
+			await goto('/', { invalidateAll: true });
 		}
 	}
 
 	async function submit() {
-		formError = undefined;
 		if (formElement.reportValidity()) {
 			captureFormData();
 			formValidation = reportFormValidation(allData, validators);
@@ -126,6 +106,7 @@
 						id="first_name"
 						placeholder=" "
 						required
+						value={userProviderData.name}
 						class:input-error={formValidation?.hasErrors('first_name')}
 					/>
 					<label for="first_name">First Name</label>
@@ -140,6 +121,7 @@
 						id="last_name"
 						placeholder=" "
 						required
+						value={userProviderData.last_name}
 						class:input-error={formValidation?.hasErrors('last_name')}
 					/>
 					<label for="last_name">Last Name</label>
@@ -159,40 +141,14 @@
 					id="email"
 					placeholder=" "
 					required
+					value={userProviderData.email}
+					readonly
+					disabled
 					class:input-error={formValidation?.hasErrors('email')}
 				/>
 				<label for="email">Email</label>
 			</div>
 			{@render errors(formValidation?.getError('email') ?? [])}
-		</div>
-		<div>
-			<div class="input-label">
-				<input
-					type="password"
-					name="password"
-					id="password"
-					placeholder=" "
-					required
-					class:input-error={formValidation?.hasErrors('password')}
-				/>
-				<label for="password">Password</label>
-				{@render errors(formValidation?.getError('password') ?? [])}
-			</div>
-		</div>
-		<div>
-			<div class="input-label">
-				<input
-					type="password"
-					name="confirm_password"
-					id="confirm_password"
-					placeholder=" "
-					required
-					class:input-error={formValidation?.hasErrors('confirm_password')}
-				/>
-				<label for="confirm_password">Confirm Password</label>
-			</div>
-			{@render errors(formValidation?.getError('confirm_password') ?? [])}
-			{@render errors(formError ? [formError] : [])}
 		</div>
 	</div>
 {/snippet}
@@ -238,7 +194,7 @@
 		<a href={resolve('/')} title="Go back home">
 			<MoveLeft size="3rem" />
 		</a>
-		<h1>Join us!</h1>
+		<h1>Welcome {userProviderData.name}!</h1>
 		<form
 			onsubmit={async (event) => {
 				event.preventDefault();
@@ -250,10 +206,13 @@
 				{@render steps[currentStep]()}
 			</fieldset>
 			<div class="actions">
-				{#if currentStep == 0}
-					<a href={resolve('/login')}>Already have an account? Login!</a>
-				{/if}
 				<div style="margin-left:auto;">
+					<button
+						onclick={async () => {
+							await fetch('/api/auth/cancel', { method: 'POST' });
+							goto(resolve('/'), { invalidateAll: true });
+						}}>Cancel</button
+					>
 					<button
 						type="button"
 						class="secondary-btn"
