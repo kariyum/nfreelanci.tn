@@ -42,9 +42,12 @@
 {:else if data.user.isOk() && data.notifications.isErr()}
 	<div>Oupsie... failed to fetch notifications. Refresh the page please!</div>
 {:else}
-	<div class="container">
-		<NavbarNewUser></NavbarNewUser>
-	</div>
+	{#if data.userJsonResponse.isErr()}
+		<div class="container">
+			<NavbarNewUser></NavbarNewUser>
+		</div>
+	{/if}
+
 	{@render children()}
 {/if}
 
