@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import GoogleLogin from '$lib/components/auth/GoogleLogin.svelte';
 	import AlreadyLoggedIn from '$lib/pages/AlreadyLoggedIn.svelte';
 	import { cyrb53 } from '$lib/utils.js';
 	import { MoveLeft } from 'lucide-svelte';
@@ -73,6 +74,8 @@
 			</form>
 			<a href={resolve('/register')}>Don't have an account? Register!</a>
 		</div>
+
+		<GoogleLogin></GoogleLogin>
 	</div>
 {/if}
 
