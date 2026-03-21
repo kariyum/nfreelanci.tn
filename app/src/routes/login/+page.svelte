@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import GoogleLogin from '$lib/components/auth/GoogleLogin.svelte';
+	import OrSeparator from '$lib/components/auth/OrSeparator.svelte';
 	import AlreadyLoggedIn from '$lib/pages/AlreadyLoggedIn.svelte';
 	import { cyrb53 } from '$lib/utils.js';
 	import { MoveLeft } from 'lucide-svelte';
@@ -69,9 +71,15 @@
 						{final_error_message}
 					</p>
 				{/if}
-				<button type="submit" onclick={handleSubmit}>Login</button>
+				<div
+					style="display:flex; justify-content: space-between; align-items: center; margin: 1rem 0;"
+				>
+					<a href={resolve('/register')}>Don't have an account? Register!</a>
+					<button type="submit" onclick={handleSubmit}>Login</button>
+				</div>
 			</form>
-			<a href={resolve('/register')}>Don't have an account? Register!</a>
+			<OrSeparator></OrSeparator>
+			<GoogleLogin></GoogleLogin>
 		</div>
 	</div>
 {/if}
@@ -96,10 +104,6 @@
 		margin: 0rem;
 		margin-top: 1rem;
 	}
-	button {
-		margin: 0rem;
-		margin-top: 1rem;
-	}
 
 	.fields-container {
 		display: flex;
@@ -115,7 +119,7 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 0 1rem;
-		max-width: 45rem;
+		max-width: 40rem;
 		margin: auto;
 	}
 </style>

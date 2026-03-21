@@ -27,11 +27,12 @@ pub async fn get_user(
     password: String,
     conn: impl Executor<'_, Database = Postgres>,
 ) -> Result<Option<UserRow>, Error> {
-    sqlx::query_as::<_, UserRow>(
-        "SELECT email, role FROM users WHERE email = $1 AND hashed_password = $2",
+    sqlx::query_as!(
+        UserRow,
+        "SELECT users.email, role FROM users join user_credentials ON (users.email = user_credentials.email) WHERE users.email = $1 AND hashed_password = $2",
+        &email,
+        &password,
     )
-    .bind(&email)
-    .bind(&password)
     .fetch_optional(conn)
     .await
 }
@@ -68,7 +69,7 @@ pub async fn update_password(
     conn: impl Executor<'_, Database = Postgres>,
 ) -> Result<u8, Error> {
     sqlx::query!(
-        r#"UPDATE users SET hashed_password = $1 WHERE email = $2 AND hashed_password = $3"#,
+        r#"UPDATE user_credentials SET hashed_password = $1 WHERE email = $2 AND hashed_password = $3"#,
         update_password_request.new_password,
         update_password_request.email,
         update_password_request.current_password
@@ -117,20 +118,76 @@ pub async fn insert_user(
     register_request: &RegisterRequest,
     conn: impl Executor<'_, Database = Postgres>,
 ) -> Result<(), sqlx::Error> {
-    sqlx::query(
+    sqlx::query!(
         "
-            INSERT INTO users (email, hashed_password, role, first_name, last_name)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO users (email, role, first_name, last_name)
+            VALUES ($1, $2, $3, $4)
         ",
+        &register_request.email,
+        &register_request.role,
+        &register_request.first_name,
+        &register_request.last_name,
     )
-    .bind(&register_request.email)
-    .bind(&register_request.password)
-    .bind(&register_request.role)
-    .bind(&register_request.first_name)
-    .bind(&register_request.last_name)
     .execute(conn)
     .await
     .map(|_| ())
+}
+
+pub async fn insert_user_credentials(
+    email: &str,
+    password: &str,
+    conn: impl Executor<'_, Database = Postgres>,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        "
+            INSERT INTO user_credentials (email, hashed_password)
+            VALUES ($1, $2)
+        ",
+        email,
+        password,
+    )
+    .execute(conn)
+    .await
+    .map(|_| ())
+}
+
+pub struct ProviderUserRegisterInsert {
+    pub email: String,
+    pub last_name: String,
+    pub first_name: String,
+    pub role: String,
+}
+
+pub async fn insert_user_provider(
+    register_request: &ProviderUserRegisterInsert,
+    conn: impl Executor<'_, Database = Postgres>,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        "
+            INSERT INTO users (email, role, first_name, last_name)
+            VALUES ($1, $2, $3, $4)
+        ",
+        &register_request.email,
+        &register_request.role,
+        &register_request.first_name,
+        &register_request.last_name,
+    )
+    .execute(conn)
+    .await
+    .map(|_| ())
+}
+
+pub async fn get_user_provider(
+    email: &str,
+    conn: impl Executor<'_, Database = Postgres>,
+) -> Result<Option<UserRow>, sqlx::Error> {
+    sqlx::query_as!(
+        UserRow,
+        "SELECT email, role FROM users WHERE email = $1",
+        email
+    )
+    .fetch_optional(conn)
+    .await
 }
 
 #[cfg(test)]
