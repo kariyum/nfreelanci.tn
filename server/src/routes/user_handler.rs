@@ -331,13 +331,13 @@ async fn cancel_provider_registeration(google_auth: web::Data<GoogleAuth>) -> im
 pub fn routes() -> impl HttpServiceFactory {
     web::scope("auth")
         .route("login", web::post().to(login))
-        .route("register", web::post().to(register))
         .route(
             "register",
             web::post()
                 .guard(HasCookie("pre_auth"))
                 .to(handle_user_register_from_provider),
         )
+        .route("register", web::post().to(register))
         .route("cancel", web::post().to(cancel_provider_registeration))
         .route("logout", web::get().to(logout))
         .route(

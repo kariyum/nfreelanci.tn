@@ -3,14 +3,18 @@ use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{middleware::Logger, App, HttpServer};
 use dotenv::dotenv;
+use log::warn;
 use server::routes;
 use server::services::{database::get_db_pool, google_auth::create_google_auth};
 use server::websocket::lobby::Lobby;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    dotenv().expect("Could not load .env file...");
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug")); // "info"
+    dotenv()
+        .inspect_err(|err| warn!("Could not load .env file... {}", err))
+        .ok();
+
     let pool = get_db_pool().await?;
     sqlx::migrate!("./migrations")
         .run(&pool)

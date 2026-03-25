@@ -10,6 +10,14 @@ services:
       - PG_USER=postgres
       - PG_PASSWORD_FILE=/run/secrets/db-password
       - SQLX_OFFLINE=true
+      - GOOGLE_CLIENT_ID={{ .GOOGLE_CLIENT_ID }}
+      - GOOGLE_CLIENT_SECRET={{ .GOOGLE_CLIENT_SECRET }}
+      - GOOGLE_LOGIN_URL={{ .GOOGLE_LOGIN_URL }}
+      - GOOGLE_TOKEN_URL={{ .GOOGLE_TOKEN_URL }}
+      - GOOGLE_USER_INFO_URL={{ .GOOGLE_USER_INFO_URL }}
+      - OATH_APP_ACCESS_DENIED_URL={{ .OATH_APP_ACCESS_DENIED_URL }}
+      - OAUTH_APP_REDIRECTION_URL={{ .OAUTH_APP_REDIRECTION_URL }}
+      - OAUTH_CALLBACK_URL={{ .OAUTH_CALLBACK_URL }}
     networks:
       - client-side
       - server-side
