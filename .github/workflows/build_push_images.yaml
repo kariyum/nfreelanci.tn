@@ -10,25 +10,20 @@ jobs:
   build-rusteu:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - 
-        uses: actions/checkout@v2
-      - 
-        name: Set up Docker Buildx
+      - uses: actions/checkout@v2
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
-      - 
-        name: Set short git commit SHA
+
+      - name: Set short git commit SHA
         id: vars
         run: |
           echo "COMMIT_SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
-      - 
-        name: Build rusteu
+      - name: Build rusteu
         uses: docker/build-push-action@v6
         with:
           push: true
@@ -36,29 +31,24 @@ jobs:
           tags: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}_rusteu:latest, ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}_rusteu:${{ env.COMMIT_SHORT_SHA }}
           cache-from: type=registry,ref=${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}_rusteu:latest
           cache-to: type=inline
-  
+
   build-sveltekit:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - 
-        uses: actions/checkout@v2
-      - 
-        name: Set up Docker Buildx
+      - uses: actions/checkout@v2
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
-      - 
-        name: Set short git commit SHA
+
+      - name: Set short git commit SHA
         id: vars
         run: |
           echo "COMMIT_SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
-      - 
-        name: Build sveltekit
+      - name: Build sveltekit
         uses: docker/build-push-action@v6
         with:
           push: true
@@ -72,16 +62,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-rusteu, build-sveltekit]
     steps:
-      - 
-        uses: actions/checkout@v2
-      - 
-        name: Set outputs
+      - uses: actions/checkout@v2
+      - name: Set outputs
         id: vars
         run: |
           echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
           echo "nginx_conf=$(base64 -w0 nginx.conf)" >> $GITHUB_OUTPUT
-      - 
-        name: Render template
+      - name: Render template
         id: render_template
         uses: chuhlomin/render-template@v1.7
         with:
@@ -89,9 +76,15 @@ jobs:
           vars: |
             rusteu_image: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}_rusteu:latest
             sveltekit_image: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}_sveltekit:latest
-          # ${{ steps.vars.outputs.sha_short }}
-      - 
-        name: run commands to deploy
+            GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+            GOOGLE_LOGIN_URL: ${{ vars.GOOGLE_LOGIN_URL }}
+            GOOGLE_TOKEN_URL: ${{ vars.GOOGLE_TOKEN_URL }}
+            GOOGLE_USER_INFO_URL: ${{ vars.GOOGLE_USER_INFO_URL }}
+            OATH_APP_ACCESS_DENIED_URL: ${{ vars.OATH_APP_ACCESS_DENIED_URL }}
+            OAUTH_APP_REDIRECTION_URL: ${{ vars.OAUTH_APP_REDIRECTION_URL }}
+            OAUTH_CALLBACK_URL: ${{ vars.OAUTH_CALLBACK_URL }}
+      - name: run commands to deploy
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.PROD_HOST }}
