@@ -38,7 +38,7 @@
 				<button disabled={commonDisabled} class="cancel-btn" onclick={onClose}>Close</button>
 				<AsyncButton
 					--width="fit-content"
-					onclick={async () => await submitHandler()}
+					onclick={async () => (await submitHandler()).toResult()}
 					ondone={async () => {
 						await invalidate(`/api/projects/${page.params.id}`);
 						onSubmit();

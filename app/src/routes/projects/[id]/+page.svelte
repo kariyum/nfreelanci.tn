@@ -10,7 +10,7 @@
 <div class="page-padding">
 	<ProjectDetails
 		projectIn={data.project}
-		user={data.user}
+		user={data.user.getOrElse(undefined)}
 		onEdit={async () => {
 			await goto(resolve(`/projects/${page.params.id}/edit`));
 		}}

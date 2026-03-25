@@ -15,7 +15,7 @@ export async function load({ fetch, params, parent }) {
 	}
 
 	return {
-		proposals: proposals.unwrap(),
+		proposals: proposals.value,
 		task: task
 	};
 }

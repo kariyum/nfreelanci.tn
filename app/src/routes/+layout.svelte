@@ -30,19 +30,24 @@
 				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 		);
 	</script>
+
+	<title>nfreelanci</title>
 </svelte:head>
 
 {#if data.user.isOk() && data.notifications.isOk()}
-	<Navbar user={data.user.unwrap()} notifications={data.notifications.unwrap()} />
+	<Navbar user={data.user.value} notifications={data.notifications.value} />
 	<div class="container">
 		{@render children()}
 	</div>
 {:else if data.user.isOk() && data.notifications.isErr()}
 	<div>Oupsie... failed to fetch notifications. Refresh the page please!</div>
 {:else}
-	<div class="container">
-		<NavbarNewUser></NavbarNewUser>
-	</div>
+	{#if data.userJsonResponse.isErr()}
+		<div class="container">
+			<NavbarNewUser></NavbarNewUser>
+		</div>
+	{/if}
+
 	{@render children()}
 {/if}
 

@@ -1,31 +1,20 @@
-mod repository;
-
-use actix_cors::Cors;
-use actix_web::{middleware::Logger, App, HttpServer};
-
-pub mod websocket {
-    pub mod client;
-    pub mod lobby;
-    pub mod messages;
-}
-
-pub mod services {
-    pub mod token;
-}
-
-mod error;
-pub mod routes;
-
-use crate::websocket::lobby::Lobby;
 use actix::Actor;
+use actix_cors::Cors;
 use actix_web::web::Data;
+use actix_web::{middleware::Logger, App, HttpServer};
 use dotenv::dotenv;
-use server::services::database::get_db_pool;
+use log::warn;
+use server::routes;
+use server::services::{database::get_db_pool, google_auth::create_google_auth};
+use server::websocket::lobby::Lobby;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("debug")); // "info"
+    dotenv()
+        .inspect_err(|err| warn!("Could not load .env file... {}", err))
+        .ok();
+
     let pool = get_db_pool().await?;
     sqlx::migrate!("./migrations")
         .run(&pool)
@@ -38,12 +27,15 @@ async fn main() -> std::io::Result<()> {
     let port = std::env::var("PORT")
         .map(|port| port.parse::<u16>().expect("PORT is not a i32"))
         .expect("PORT env var is not set");
+    let google_auth = create_google_auth();
+
     HttpServer::new(move || {
         let cors = Cors::permissive();
         App::new()
             .wrap(cors)
             .app_data(Data::new(pool.clone()))
             .app_data(Data::new(chat_server.clone())) //register the lobby
+            .app_data(Data::new(google_auth.clone()))
             .wrap(Logger::default())
             .service(routes::user_handler::routes())
             .service(routes::project_handler::routes())

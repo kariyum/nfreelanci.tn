@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { proposalsClient } from '$lib/features/proposals/client';
 	import type { ProposalGET } from '$lib/features/proposals/models';
@@ -58,13 +59,15 @@
 </script>
 
 {#snippet proposalsSnippet(proposals: ProposalGET[], task: TaskGET)}
-	{#each proposals as proposal}
+	{#each proposals as proposal (proposal.id)}
 		<div class="proposal">
 			<div class="left">
 				<div class="row">
 					<div>{proposal.user_id}</div>
 					<a
-						href={`/projects/${page.params.id}/tasks/${proposal.task_id}/proposals/${proposal.id}/discussion`}
+						href={resolve(
+							`/projects/${page.params.id}/tasks/${proposal.task_id}/proposals/${proposal.id}/discussion`
+						)}
 						class="reset"><MessageCircle size="14" /></a
 					>
 				</div>
@@ -106,10 +109,10 @@
 		<h2>Applications ( {proposals?.length || 0} )</h2>
 		<div
 			class="app-actions"
-			style:--top={'0px'}
+			style:--top="0px"
 			style:--left={`${left}px`}
 			style:--width={`${width}px`}
-			style:--height={'30px'}
+			style:--height="30px"
 		>
 			<button
 				data-active={filterStatus == undefined}

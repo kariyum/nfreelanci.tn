@@ -1,4 +1,6 @@
 import { writable, get } from 'svelte/store';
+import type { User } from './features/auth/client';
+import { error } from '@sveltejs/kit';
 
 export const cyrb53 = (str: string, seed = 0) => {
 	let h1 = 0xdeadbeef ^ seed,
@@ -207,77 +209,59 @@ export class Err<T, E> extends Result<T, E> {
 	}
 }
 
-export class FetchResult<T> {
-	constructor(
-		public readonly value?: T,
-		public readonly error?: FetchError
-	) {}
+export class FetchErr {
+	constructor(public readonly error: FetchError) {}
 
-	static ok<T>(value: T): FetchResult<T> {
-		return new FetchOk<T>(value);
+	isOk<T>(): this is FetchOk<T> {
+		return false;
 	}
 
-	static err<T>(error: FetchError): FetchResult<T> {
-		return new FetchErr(error);
+	isErr(): this is FetchErr {
+		return true;
+	}
+
+	map(): FetchErr {
+		return this;
+	}
+
+	flatMap(): FetchErr {
+		return this;
+	}
+
+	getOrElse<T>(defaultValue: T): T {
+		return defaultValue;
+	}
+
+	toResult<T>(): Result<T, FetchError> {
+		return Result.err<T, FetchError>(this.error);
+	}
+}
+
+export class FetchOk<T> {
+	constructor(public readonly value: T) {}
+
+	isOk(): this is FetchOk<T> {
+		return true;
+	}
+
+	isErr(): this is FetchErr {
+		return false;
+	}
+
+	map<U>(f: (value: T) => U): FetchOk<U> | FetchErr {
+		return new FetchOk(f(this.value!));
+	}
+
+	flatMap<U>(f: (value: T) => FetchOk<U> | FetchErr): FetchOk<U> | FetchErr {
+		return f(this.value!);
+	}
+
+	getOrElse(): T {
+		return this.value;
 	}
 
 	toResult(): Result<T, FetchError> {
-		return new Result(this.value, this.error);
-	}
-
-	static reduce(fetchResults: FetchResult<unknown>[]): FetchError | undefined {
-		const failedResults = fetchResults
-			.map((result) => result.error)
-			.filter((result) => result !== undefined);
-		return failedResults.toSorted((err1, err2) => err1.priority - err2.priority).at(0);
-	}
-
-	isOk(): this is FetchResult<T> & { error: undefined; value: T } {
-		return this.error === undefined;
-	}
-
-	isErr(): this is FetchError & { error: FetchError; value: undefined } {
-		return this.value === undefined;
-	}
-
-	map<U>(f: (value: T) => U): FetchResult<U> {
-		if (this.isOk()) {
-			return new FetchOk(f(this.value!));
-		} else {
-			return new FetchErr(this.error!);
-		}
-	}
-
-	flatMap<U>(f: (value: T) => FetchResult<U>): FetchResult<U> {
-		if (this.isOk()) {
-			return f(this.value!);
-		} else {
-			return new FetchErr(this.error!);
-		}
-	}
-
-	getOrElse(defaultValue: T): T {
-		return this.isOk() ? this.value! : defaultValue;
-	}
-
-	unwrap(): T {
-		if (this.isOk()) {
-			return this.value!;
-		} else {
-			throw this.error;
-		}
-	}
-}
-
-export class FetchErr extends FetchResult<never> {
-	constructor(error: FetchError) {
-		super(undefined, error);
-	}
-}
-
-export class FetchOk<T> extends FetchResult<T> {
-	constructor(value: T) {
-		super(value);
+		return Result.ok<T, FetchError>(this.value);
 	}
 }
 
@@ -288,13 +272,22 @@ async function responseToFetchResult<T>(response: Response): Promise<FetchOk<T> 
 	} else if (response.status === 404) {
 		return new FetchErr(new NotFound('Not found'));
 	} else if (400 <= response.status && response.status < 500) {
-		return new FetchErr(new ClientError(response.status, 'Client error'));
+		return new FetchErr(
+			new ClientError(
+				response.status,
+				responseData.isOk() ? (responseData.value as string) : 'Client Error'
+			)
+		);
 	} else if (500 <= response.status) {
 		return new FetchErr(new ServerError(response.status, 'Server error'));
 	} else if (!response.ok) {
 		return new FetchErr(new NetworkError(response.status, `Fetch error ${response.status}`));
 	}
-	return responseData.map((value) => value as T);
+	if (responseData.isOk()) {
+		return new FetchOk(responseData.value as T);
+	} else {
+		return new FetchErr(responseData.error);
+	}
 }
 
 async function responseFetchData<T>(response: Response): Promise<FetchOk<T | string> | FetchErr> {
@@ -315,7 +308,7 @@ export async function fetchIntoResult<T>(
 	return fetch()
 		.then((response) => responseToFetchResult<T>(response))
 		.catch((error) => {
-			return FetchResult.err(new NetworkError(408, error.message));
+			return new FetchErr(new NetworkError(408, error.message));
 		});
 }
 
@@ -350,14 +343,14 @@ export function computeTimeAgo(date: Date): string {
 	return `${years} years ago`;
 }
 
-export const storage = (key: string, initValue: any) => {
+export const storage = (key: string, initValue: number | string | undefined | null) => {
 	const store = writable(initValue);
 
 	const storedValueStr = localStorage.getItem(key);
 	if (storedValueStr != null) store.set(JSON.parse(storedValueStr));
 
 	store.subscribe((val) => {
-		if ([null, undefined].includes(val)) {
+		if (val === undefined || val === null) {
 			localStorage.removeItem(key);
 		} else {
 			localStorage.setItem(key, JSON.stringify(val));
@@ -394,4 +387,17 @@ export function clickOutside(node: HTMLElement, callback: () => void) {
 			document.removeEventListener('click', handleClick);
 		}
 	};
+}
+
+export function raiseIfUnauthorized(user: FetchOk<User> | FetchErr): User {
+	if (user.isOk()) {
+		return user.value;
+	} else {
+		error(user.error.status, { message: user.error.message });
+	}
+}
+
+export function reduceFetchResults(results: (FetchOk<unknown> | FetchErr)[]): FetchErr | undefined {
+	const errors = results.filter((res) => res.isErr());
+	return errors.toSorted((err1, err2) => err1.error.priority - err2.error.priority).at(0);
 }
