@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import type { UserJson } from '$lib/features/auth/client';
 	import { cyrb53, fetchIntoResult } from '$lib/utils.js';
 	import { StringValidator, Validator } from '$lib/validator';
@@ -191,9 +192,11 @@
 
 <div class="container">
 	<div class="sub-container">
-		<a href={resolve('/')} title="Go back home">
-			<MoveLeft size="3rem" />
-		</a>
+		{#if page.url.pathname !== '/setup-profile'}
+			<a href={resolve('/')} title="Go back home">
+				<MoveLeft size="3rem" />
+			</a>
+		{/if}
 		<h1>Welcome {userProviderData.name}!</h1>
 		<form
 			onsubmit={async (event) => {

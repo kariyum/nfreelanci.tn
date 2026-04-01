@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	import Footer from '$lib/components/navbar/Footer.svelte';
 
 	let cards = [
@@ -43,19 +44,15 @@
 		</h1>
 		<p class="subtitle">Effortlessly connect with skilled local talent!</p>
 	</div>
-	<div class="register-btn">
-		<a href="/register">
-			<button class="primary-btn">Get Started - It's Free!</button>
-		</a>
-	</div>
+	<a href={resolve('/register')} class="btn-a"> Get Started - It's Free! </a>
 </div>
 <div class="bg">
 	<div class="can-do">
-		<h1>Unleash Your Potential with Bond</h1>
+		<h1>Unleash Your Potential with nfreelanci</h1>
 		<ul>
-			{#each cards as card}
+			{#each cards as card (card)}
 				<li>
-					<h2>{card.title}</h2>
+					<span>{card.title}</span>
 					<p>{card.description}</p>
 				</li>
 			{/each}
@@ -63,24 +60,32 @@
 	</div>
 
 	<div class="body">
-		<h1>Meet the Bond Team!</h1>
+		<h1>Meet the Team!</h1>
 		<p>
-			Born from a passion for empowering Tunisian talent, Bond was founded by a team of young
+			Born from a passion for empowering Tunisian talent, nfreelanci was founded by a team of young
 			Tunisian software engineers committed to building high-quality products for our community.
 			This is our first app, and we're excited to connect you with the best.
 		</p>
 	</div>
 
 	<div class="opportunity-section">
-		<h1>Ready to Bond with Your Next Opportunity?</h1>
-		<p>Join Bond today and experience the future of freelance work. It's free to get started!</p>
-		<a href="/register" class="primary-btn">Sign-up Now</a>
+		<h1>Ready to tackle your next opportunity?</h1>
+		<p>Join nfreelanci today and experience the future of freelance work. It's totally free</p>
+		<a href={resolve('/register')} class="btn-a"> Sign-up Now</a>
 	</div>
 
 	<Footer></Footer>
 </div>
 
 <style>
+	.btn-a {
+		text-decoration: none;
+		background-color: var(--btn-bg);
+		color: inherit;
+		padding: 0.75rem 1rem;
+		font-size: medium;
+		border-radius: 5px;
+	}
 	.container {
 		margin-top: 8rem;
 		font-size: x-large;
@@ -147,13 +152,8 @@
 		padding: 2rem;
 		gap: 1rem;
 		font-size: large;
-		max-width: 80rem;
+		max-width: 50rem;
 		margin: auto;
-
-		h2 {
-			text-align: center;
-			color: var(--title);
-		}
 
 		h1:first-child {
 			margin-bottom: 2rem;
@@ -164,7 +164,7 @@
 	ul {
 		list-style: none;
 		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-columns: 1fr 1fr;
 		gap: 1.5rem;
 	}
 
@@ -179,9 +179,11 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		gap: 2rem;
+		gap: 1rem;
 
-		h2 {
+		span {
+			font-size: larger;
+			font-weight: 500;
 			color: var(--title);
 		}
 

@@ -1,29 +1,14 @@
-import { resolve } from '$app/paths';
 import { authClient, type User } from '$lib/features/auth/client.js';
 import { notificationClient, type BaseNotification } from '$lib/features/notification/client.js';
 import type { Fetch } from '$lib/types.js';
 import { FetchErr, FetchOk, reduceFetchResults, UnauthorizedError } from '$lib/utils.js';
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
-export async function load({ fetch, url }) {
-	let userJsonResponse = await authClient(fetch).get();
-	let userResponse = userJsonResponse.map((json) => json as User);
-	console.log(url.pathname);
-	if (
-		userJsonResponse.isOk() &&
-		!userJsonResponse.value.role &&
-		userJsonResponse.value.role == null
-	) {
-		console.log(userJsonResponse);
-		userResponse = new FetchErr(new UnauthorizedError('Unauthorized'));
-
-		if (url.pathname !== '/setup-profile') {
-			console.log('redirecting');
-			redirect(301, resolve('/setup-profile'));
-		}
-	} else {
-		userJsonResponse = new FetchErr(new UnauthorizedError('Unauthorized'));
-	}
+export async function load({ fetch }) {
+	const userJsonResponse = await authClient(fetch).get();
+	const userResponse = userJsonResponse.flatMap((json) =>
+		json.role ? new FetchOk(json as User) : new FetchErr(new UnauthorizedError('User with no role'))
+	);
 	const notifications = await fetchNotifications(fetch)(userResponse);
 	const fetchError = reduceFetchResults([userResponse, notifications]);
 	if (fetchError && !(fetchError.error instanceof UnauthorizedError)) {
@@ -31,10 +16,7 @@ export async function load({ fetch, url }) {
 			message: 'Oups, unrecoverable error occured... please refresh the page'
 		});
 	}
-	console.log({
-		userJsonResponse: userJsonResponse,
-		user: userResponse
-	});
+
 	return {
 		userJsonResponse: userJsonResponse,
 		user: userResponse,
