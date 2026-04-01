@@ -1,5 +1,5 @@
 <div class="container">
-	<div>2025 Bond Team</div>
+	<div>2025 nfreelanci Team</div>
 	<div>Contact us!</div>
 </div>
 

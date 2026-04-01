@@ -1,11 +1,24 @@
 <script lang="ts">
-	import { onNavigate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { goto, onNavigate } from '$app/navigation';
+	import { navigating, page } from '$app/state';
 	import Navbar from '$lib/components/navbar/Navbar.svelte';
 	import NavbarNewUser from '$lib/components/navbar/NavbarNewUser.svelte';
 	import LinearProgressBar from '$lib/ui/progress/LinearProgressBar.svelte';
+	import { onMount } from 'svelte';
 	import './styles.css';
+	import { resolve } from '$app/paths';
 	let { data, children } = $props();
+
+	onMount(async () => {
+		console.log(page.url.pathname);
+		if (
+			data.userJsonResponse.isOk() &&
+			data.userJsonResponse.value.role == null &&
+			page.url.pathname !== '/setup-profile'
+		) {
+			await goto(resolve('/setup-profile'), { replaceState: true });
+		}
+	});
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) return;

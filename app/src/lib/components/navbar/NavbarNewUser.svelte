@@ -1,19 +1,20 @@
 <script>
+	import { resolve } from '$app/paths';
 	import ThemeToggler from '$lib/components/utility/ThemeToggler.svelte';
 </script>
 
 <div class="navbar" style="view-transition-name: header">
 	<!-- svelte-ignore a11y_consider_explicit_label -->
-	<a class="left-group" href="/">
+	<a class="left-group" href={resolve('/')}>
 		<div class="logo"></div>
 	</a>
 
 	<div class="right-group">
-		<a href="/projects">View Projects</a>
+		<a href={resolve('/projects')}>View Projects</a>
 		<div>
 			<ThemeToggler></ThemeToggler>
 		</div>
-		<a href="/login">
+		<a href={resolve('/login')}>
 			<button class="primary-btn">Login</button>
 		</a>
 	</div>
@@ -50,7 +51,7 @@
 	.logo {
 		background-image: url('/logo_dark.svg');
 		height: 1.2rem;
-		aspect-ratio: 50/12;
+		width: 100px;
 		background-size: cover;
 		margin-left: 0.7rem;
 
