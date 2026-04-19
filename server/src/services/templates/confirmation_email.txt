@@ -1,0 +1,11 @@
+Hi {user_name},
+
+Thanks for signing up for nfreelanci.tn!
+Here's your verification code:
+
+{code}
+
+If you didn't request this, you can safely ignore this email.
+
+Best,
+nfreelanci.tn Team

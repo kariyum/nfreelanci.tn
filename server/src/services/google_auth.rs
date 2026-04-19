@@ -1,7 +1,6 @@
-use fake::rand::{self, rng, RngCore};
-use reqwest::{Method, Request, Url};
+use fake::rand::{self, RngCore};
+use reqwest::Url;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Clone)]
 pub struct GoogleAuth {
@@ -71,10 +70,10 @@ pub fn construct_login_url(google_auth: &GoogleAuth) -> Option<GoogleLoginStateU
 pub struct GoogleUserInfo {
     pub email: String,
     pub sub: String,
-    picture: String,
-    email_verified: bool,
+    // picture: String,
+    // email_verified: bool,
     pub name: String,
-    given_name: String,
+    // given_name: String,
     pub last_name: Option<String>,
 }
 
@@ -116,7 +115,6 @@ pub async fn exchange_code_for_token(
         .json()
         .await?;
 
-    println!("{:?}", response);
     Ok(response)
 }
 

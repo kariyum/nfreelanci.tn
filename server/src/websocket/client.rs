@@ -1,6 +1,7 @@
 use crate::websocket::lobby::Lobby;
 
 use crate::repository::messages::{insert_message, MessageCreate};
+use crate::repository::notifications::{NotificationType, RawNotification};
 use crate::websocket::messages::{ChatMessage, Connect, Disconnect};
 use actix::{fut, ActorContext, ActorFutureExt, ContextFutureSpawner, Message, WrapFuture};
 use actix::{Actor, Addr, Running, StreamHandler};
@@ -13,7 +14,6 @@ use serde_json;
 use sqlx::PgPool;
 use std::time::{Duration, Instant};
 use uuid::Uuid;
-use crate::repository::notifications::{NotificationType, RawNotification};
 
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
 const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
@@ -36,6 +36,7 @@ struct ClientMessage {
 
 #[derive(Serialize, Deserialize, Message)]
 #[rtype(result = "()")]
+#[allow(dead_code)]
 struct ClientMessageResponse {
     discussion_id: i32,
     content: String,
@@ -151,7 +152,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for Client {
                     content: client_message.content.clone(),
                     sender_id: user_id.clone(),
                     receivers: client_message.receivers.clone(),
-                    notification_type: NotificationType::Message
+                    notification_type: NotificationType::Message,
                 };
                 async move {
                     let message_create = MessageCreate {
@@ -183,6 +184,6 @@ impl Handler<RawNotification> for Client {
     type Result = ();
 
     fn handle(&mut self, msg: RawNotification, ctx: &mut Self::Context) -> Self::Result {
-       ctx.text(serde_json::to_string(&msg).unwrap())
+        ctx.text(serde_json::to_string(&msg).unwrap())
     }
 }

@@ -117,7 +117,7 @@ pub fn generate_google_state_cookie(
     google_login_state: GoogleLoginState,
 ) -> Result<String, jsonwebtoken::errors::Error> {
     let expiration = Utc::now()
-        .checked_add_signed(chrono::Duration::days(30))
+        .checked_add_signed(chrono::Duration::minutes(30))
         .expect("valid timestamp")
         .timestamp() as usize;
 

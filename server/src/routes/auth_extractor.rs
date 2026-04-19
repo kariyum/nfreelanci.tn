@@ -8,6 +8,7 @@ use actix_web::dev::Payload;
 use actix_web::guard::{Guard, GuardContext};
 use actix_web::{Error, FromRequest, HttpRequest};
 use futures_util::future::ready;
+use serde::{Deserialize, Serialize};
 
 impl FromRequest for Claims {
     type Error = Error;
@@ -70,6 +71,32 @@ impl FromRequest for GoogleLoginState {
             ready(Ok(claims))
         } else {
             ready(Err(ServiceError::Unauthorized.into()))
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct EmailVerificationCode {
+    pub code: String,
+}
+
+impl FromRequest for EmailVerificationCode {
+    type Error = Error;
+    type Future = futures::future::Ready<Result<Self, Self::Error>>;
+
+    fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
+        let cookie = req
+            .cookie("email_verification_code")
+            .map(|cookie| serde_json::from_str(cookie.value()).ok())
+            .flatten();
+
+        if let Some(code) = cookie {
+            ready(Ok(code))
+        } else {
+            ready(Err(ServiceError::BadRequest(
+                "Missing email verification code".to_string(),
+            )
+            .into()))
         }
     }
 }
