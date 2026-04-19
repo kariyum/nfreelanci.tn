@@ -23,6 +23,9 @@ export const authClient = (
 		get: async () => {
 			const claimsResponse = await fetchIntoResult<UserJson>(() => fetch('/api/auth/whoami'));
 			return claimsResponse;
+		},
+		sendEmailVerificationCode: async () => {
+			return fetchIntoResult(() => fetch('/api/auth/verify-email', { method: 'POST' }));
 		}
 	};
 };

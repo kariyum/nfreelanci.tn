@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import EmailVerifier from '$lib/components/auth/EmailVerifier.svelte';
 	import { ClientError, cyrb53, fetchIntoResult } from '$lib/utils.js';
 	import { StringValidator, Validator } from '$lib/validator';
 	import { MoveLeft } from 'lucide-svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 
 	let formElement: HTMLFormElement;
-	const steps = [rolePicker, userInfoForm];
+	const steps = [rolePicker, userInfoForm, emailVerifier];
 	let currentStep = $state(0);
 	let formError: undefined | string = $state(undefined);
 	let allData: SvelteMap<string, string> = new SvelteMap();
+	let code: string = $state('');
 
 	const validators = (data: Map<string, string>) => {
 		return {
@@ -64,6 +66,7 @@
 	function processFormData() {
 		const hashedPassword = cyrb53(allData.get('password') ?? '').toString();
 		allData.set('password', hashedPassword);
+		allData.set('code', code);
 		allData.delete('confirm_password');
 	}
 
@@ -103,6 +106,10 @@
 		formData.entries().forEach(([key, value]) => allData.set(key, value.toString()));
 	}
 </script>
+
+{#snippet emailVerifier()}
+	<EmailVerifier bind:code></EmailVerifier>
+{/snippet}
 
 {#snippet errors(errors: string[])}
 	{#if errors.length > 0}
@@ -266,6 +273,10 @@
 							onclick={() => {
 								if (formElement.reportValidity()) {
 									captureFormData();
+									if (currentStep == 1) {
+										formValidation = reportFormValidation(allData, validators);
+										if (formValidation.hasFormErrors) return;
+									}
 									currentStep += 1;
 								}
 							}}

@@ -5,6 +5,7 @@ use actix_web::{middleware::Logger, App, HttpServer};
 use dotenv::dotenv;
 use log::warn;
 use server::routes;
+use server::services::email_service::SMTPCredentials;
 use server::services::{database::get_db_pool, google_auth::create_google_auth};
 use server::websocket::lobby::Lobby;
 
@@ -28,6 +29,9 @@ async fn main() -> std::io::Result<()> {
         .map(|port| port.parse::<u16>().expect("PORT is not a i32"))
         .expect("PORT env var is not set");
     let google_auth = create_google_auth();
+    let credentials = SMTPCredentials {
+        password: std::env::var("SMTP_RELAY_PASSWORD").unwrap(),
+    };
 
     HttpServer::new(move || {
         let cors = Cors::permissive();
@@ -36,6 +40,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(pool.clone()))
             .app_data(Data::new(chat_server.clone())) //register the lobby
             .app_data(Data::new(google_auth.clone()))
+            .app_data(Data::new(credentials.clone()))
             .wrap(Logger::default())
             .service(routes::user_handler::routes())
             .service(routes::project_handler::routes())

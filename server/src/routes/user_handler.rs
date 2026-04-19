@@ -1,27 +1,27 @@
 use std::hash::{DefaultHasher, Hash, Hasher};
 
 use crate::repository::user::{
-    get_user, get_user_by_credentials, get_user_provider, insert_user, insert_user_credentials,
+    get_user_by_credentials, get_user_provider, insert_user, insert_user_credentials,
     insert_user_provider, update_password, ProviderUserRegisterInsert, RegisterRequest,
     UpdatePasswordRequest,
 };
-use crate::routes::auth_extractor::HasCookie;
+use crate::routes::auth_extractor::{EmailVerificationCode, HasCookie};
+use crate::services::email_service::{send_email_confirmation_code, SMTPCredentials};
 use crate::services::google_auth::{
-    self, construct_login_url, exchange_code_for_token, fetch_user_info, GoogleAuth,
-    GoogleLoginState, GoogleLoginStateUrl,
+    construct_login_url, exchange_code_for_token, fetch_user_info, GoogleAuth, GoogleLoginState,
+    GoogleLoginStateUrl,
 };
 use crate::services::token::{
-    generate_cookie, generate_google_state_cookie, generate_jwt, generate_jwt_provider_login,
-    Claims, UserInfoPreLogin,
+    generate_cookie, generate_google_state_cookie, generate_jwt_provider_login, Claims,
+    UserInfoPreLogin,
 };
 use actix_web::cookie::time::Duration;
 use actix_web::cookie::Cookie;
 use actix_web::dev::HttpServiceFactory;
-use actix_web::guard::Guard;
-use actix_web::http::StatusCode;
 use actix_web::web::{Form, Json};
-use actix_web::{web, HttpResponse, HttpResponseBuilder, Responder};
-use env_logger::builder;
+use actix_web::{web, HttpResponse, Responder};
+use fake::rand::{self};
+use fake::Rng;
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Postgres};
 
@@ -62,45 +62,37 @@ pub async fn register(
     Form(register_request): Form<RegisterRequest>,
     pool: web::Data<Pool<Postgres>>,
 ) -> impl Responder {
-    let user = get_user_provider(&register_request.email, pool.as_ref())
+    let hashed_password = hash_password(&register_request.password);
+    let hashed_register_request = RegisterRequest {
+        password: hashed_password,
+        ..register_request
+    };
+
+    let mut tx = pool.begin().await.expect("Failed to open a transaction");
+
+    insert_user(&hashed_register_request, &mut *tx)
         .await
-        .expect("Failed to get user");
+        .expect("Failed to insert user");
 
-    if user.is_some() {
-        HttpResponse::Conflict().body("User already exists...")
-    } else {
-        let hashed_password = hash_password(&register_request.password);
-        let hashed_register_request = RegisterRequest {
-            password: hashed_password,
-            ..register_request
-        };
+    insert_user_credentials(
+        &hashed_register_request.email,
+        &hashed_register_request.password,
+        &mut *tx,
+    )
+    .await
+    .expect("Failed to insert user credentials");
 
-        let mut tx = pool.begin().await.expect("Failed to open a transaction");
-
-        insert_user(&hashed_register_request, &mut *tx)
-            .await
-            .expect("Failed to insert user");
-
-        insert_user_credentials(
-            &hashed_register_request.email,
-            &hashed_register_request.password,
-            &mut *tx,
-        )
+    tx.commit()
         .await
-        .expect("Failed to insert user credentials");
+        .expect("Failed to commit user insert transaction");
 
-        tx.commit()
-            .await
-            .expect("Failed to commit user insert transaction");
+    let cookie = generate_cookie(
+        &hashed_register_request.email,
+        &hashed_register_request.role,
+    )
+    .expect("Failed to generate cookie");
 
-        let cookie = generate_cookie(
-            &hashed_register_request.email,
-            &hashed_register_request.role,
-        )
-        .expect("Failed to generate cookie");
-
-        HttpResponse::Ok().cookie(cookie).finish()
-    }
+    HttpResponse::Ok().cookie(cookie).finish()
 }
 async fn logout() -> impl Responder {
     let mut cookie = Cookie::build("auth", "")
@@ -160,7 +152,7 @@ async fn google_auth(google_auth: web::Data<GoogleAuth>) -> impl Responder {
         .path("/")
         .secure(true)
         .http_only(true)
-        .max_age(Duration::days(1))
+        .max_age(Duration::hours(1))
         .finish();
 
         HttpResponse::SeeOther()
@@ -328,9 +320,81 @@ async fn cancel_provider_registeration(google_auth: web::Data<GoogleAuth>) -> im
         .finish()
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct EmailConfirmationRequest {
+    email: String,
+    user_name: String,
+}
+
+fn generate_random_code() -> u32 {
+    let mut rng = rand::rng();
+    rng.random_range(100_000..=999_999)
+}
+
+async fn send_email_handler(
+    smtp_credentials: web::Data<SMTPCredentials>,
+    Json(email_confirmation_request): web::Json<EmailConfirmationRequest>,
+    pool: web::Data<Pool<Postgres>>,
+) -> impl Responder {
+    let user = get_user_provider(&email_confirmation_request.email, pool.as_ref())
+        .await
+        .expect("Failed to get user");
+
+    if let Some(_) = user {
+        HttpResponse::Conflict().body("User already exists...")
+    } else {
+        let code = generate_random_code().to_string();
+        send_email_confirmation_code(
+            smtp_credentials.as_ref().clone(),
+            email_confirmation_request.user_name,
+            &code,
+            &email_confirmation_request.email,
+        )
+        .await
+        .expect("Failed to send email");
+
+        let mut hasher = DefaultHasher::new();
+        code.hash(&mut hasher);
+        let hashed_code = hasher.finish().to_string();
+        let verification_code = EmailVerificationCode { code: hashed_code };
+        let cookie_value = serde_json::to_string(&verification_code)
+            .expect("Failed to serialize email verification code");
+        let cookie = Cookie::build("email_verification_code", cookie_value)
+            .path("/")
+            .secure(true)
+            .http_only(true)
+            .max_age(Duration::minutes(30))
+            .finish();
+        HttpResponse::Ok().cookie(cookie).finish()
+    }
+}
+
+pub async fn check_verification_code(
+    cookie: EmailVerificationCode,
+    Json(user_input): web::Json<EmailVerificationCode>,
+) -> impl Responder {
+    let mut hasher = DefaultHasher::new();
+    user_input.code.hash(&mut hasher);
+    let hashed_user_code = hasher.finish().to_string();
+    if cookie.code != hashed_user_code {
+        HttpResponse::Unauthorized().finish()
+    } else {
+        let mut cookie = Cookie::new("email_verification_code", "");
+        cookie.make_removal();
+        HttpResponse::Ok().cookie(cookie).finish()
+    }
+}
+
 pub fn routes() -> impl HttpServiceFactory {
     web::scope("auth")
         .route("login", web::post().to(login))
+        .route("verify-email", web::post().to(send_email_handler))
+        .route(
+            "check-verification-code",
+            web::post()
+                .guard(HasCookie("email_verification_code"))
+                .to(check_verification_code),
+        )
         .route(
             "register",
             web::post()

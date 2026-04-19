@@ -1,6 +1,7 @@
 pub mod repository;
 pub mod services {
     pub mod database;
+    pub mod email_service;
     pub mod google_auth;
     pub mod token;
 }
