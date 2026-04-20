@@ -30,7 +30,7 @@ async fn main() -> std::io::Result<()> {
         .expect("PORT env var is not set");
     let google_auth = create_google_auth();
     let credentials = SMTPCredentials {
-        password: std::env::var("SMTP_RELAY_PASSWORD").unwrap(),
+        password: std::env::var("SMTP_RELAY_PASSWORD").expect("SMTP_RELAY_PASSWORD does not exist"),
     };
 
     HttpServer::new(move || {
