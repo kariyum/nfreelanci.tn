@@ -84,6 +84,7 @@ jobs:
             OATH_APP_ACCESS_DENIED_URL: ${{ vars.OATH_APP_ACCESS_DENIED_URL }}
             OAUTH_APP_REDIRECTION_URL: ${{ vars.OAUTH_APP_REDIRECTION_URL }}
             OAUTH_CALLBACK_URL: ${{ vars.OAUTH_CALLBACK_URL }}
+            SMTP_RELAY_PASSWORD: ${{ secrets.SMTP_RELAY_PASSWORD }}
       - name: run commands to deploy
         uses: appleboy/ssh-action@v0.1.10
         with:
