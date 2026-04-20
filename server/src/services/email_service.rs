@@ -3,9 +3,9 @@ use lettre::message::Mailbox;
 use lettre::message::SinglePart;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::AsyncSmtpTransport;
+use lettre::AsyncStd1Executor;
 use lettre::AsyncTransport;
 use lettre::Message;
-use lettre::Tokio1Executor;
 
 #[derive(Clone)]
 pub struct SMTPCredentials {
@@ -37,7 +37,7 @@ pub async fn send_email_confirmation_code(
 
     let creds = Credentials::new("no-reply@nfreelanci.tn".to_string(), credentials.password);
 
-    let mailer = AsyncSmtpTransport::<Tokio1Executor>::relay("ssl0.ovh.net")?
+    let mailer = AsyncSmtpTransport::<AsyncStd1Executor>::relay("ssl0.ovh.net")?
         .credentials(creds)
         .build();
 
