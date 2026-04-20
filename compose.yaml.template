@@ -18,6 +18,7 @@ services:
       - OATH_APP_ACCESS_DENIED_URL={{ .OATH_APP_ACCESS_DENIED_URL }}
       - OAUTH_APP_REDIRECTION_URL={{ .OAUTH_APP_REDIRECTION_URL }}
       - OAUTH_CALLBACK_URL={{ .OAUTH_CALLBACK_URL }}
+      - SMTP_RELAY_PASSWORD={{ .SMTP_RELAY_PASSWORD }}
     networks:
       - client-side
       - server-side
